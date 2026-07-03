@@ -1,21 +1,19 @@
 package com.nsglobal.queue.common.enums;
 
-
 public enum TicketStatus {
 
 	CREATED,
-	
-	WAITING,//en attente
 
-    CALLED,// appelé
+	WAITING, // en attente
 
-    IN_PROGRESS,// en cours
+	CALLED, // appelé
 
-    COMPLETED,// fini
+	IN_PROGRESS, // en cours
 
-    CANCELLED,// Annulé
+	COMPLETED, // fini
 
-    ABSENT //Manqué
-   
+	CANCELLED, // Annulé
+
+	ABSENT // Manqué
 
 }

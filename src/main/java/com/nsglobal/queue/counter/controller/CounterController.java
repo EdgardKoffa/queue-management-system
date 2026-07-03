@@ -23,14 +23,13 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping(ApiRoutes.COUNTERS)
 @RequiredArgsConstructor
 public class CounterController {
-	 private final CounterService counterervice;
-	 
-	 
-	  @GetMapping
-	public List<CounterResponseDto> findAll(){
+	private final CounterService counterervice;
+
+	@GetMapping
+	public List<CounterResponseDto> findAll() {
 		return counterervice.findAll();
 	}
-	
+
 	@GetMapping("/{id}")
 	public CounterResponseDto findById(@Valid @PathVariable Long id) {
 		return counterervice.findById(id);
@@ -40,15 +39,15 @@ public class CounterController {
 	public CounterResponseDto create(@Valid @RequestBody CounterRequestDto counter) {
 		return counterervice.create(counter);
 	}
-	
+
 	@PutMapping("/{id}")
-	public CounterResponseDto update(@Valid @PathVariable Long id,@Valid @RequestBody CounterRequestDto counter) {
-		return counterervice.update(counter,id);
+	public CounterResponseDto update(@Valid @PathVariable Long id, @Valid @RequestBody CounterRequestDto counter) {
+		return counterervice.update(counter, id);
 	}
-	
+
 	@DeleteMapping("/{id}")
 	void delete(@Valid @PathVariable Long id) {
 		counterervice.delete(id);
 	}
-	 
+
 }

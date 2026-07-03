@@ -2,8 +2,6 @@ package com.nsglobal.queue.branch.dto;
 
 import java.time.LocalDateTime;
 
-import com.nsglobal.queue.agency.dto.AgencyResponseDto;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,10 +21,10 @@ public class BranchResponseDto {
 	private String city;
 	private String phone;
 	private String email;
-	private String address; 
+	private String address;
 	private String status;
 	private Long agencyId;
-    private String agencyName;
+	private String agencyName;
 	private LocalDateTime createdAt;
-	
+
 }

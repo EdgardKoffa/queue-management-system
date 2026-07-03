@@ -17,24 +17,24 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CounterRequestDto {
-	
-		@NotBlank
-		@Size(max = 20)
-		private String code;
-		
-		@NotNull
-	    private Integer number;
-		
-		@NotBlank
-		@Size(max = 100)
-	    private String name;
-		
-		@NotBlank
-	    private CounterStatus status;
-		
-		@NotNull
-	    private Boolean active ;
-		
-		@NotNull
-	    private Long branchId;
+
+	@NotBlank
+	@Size(max = 20)
+	private String code;
+
+	@NotNull
+	private Integer number;
+
+	@NotBlank
+	@Size(max = 100)
+	private String name;
+
+	@NotBlank
+	private CounterStatus status;
+
+	@NotNull
+	private Boolean active;
+
+	@NotNull
+	private Long branchId;
 }

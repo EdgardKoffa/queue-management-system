@@ -1,9 +1,9 @@
 package com.nsglobal.queue.branch.entity;
 
-
 import com.nsglobal.queue.agency.entity.Agency;
 import com.nsglobal.queue.common.entity.BaseEntity;
 import com.nsglobal.queue.common.enums.EnumStatus;
+import com.nsglobal.queue.common.enums.QueueAlgorithm;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,8 +19,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
-
 @Entity
 @Table(name = "branch")
 @Getter
@@ -30,28 +28,31 @@ import lombok.Setter;
 @Builder
 public class Branch extends BaseEntity {
 	@Column(nullable = false, unique = true)
-	private  String code;
-	
+	private String code;
+
 	@Column(nullable = false)
-	private  String name;
-	
-	 @Column(length = 20)
-	private  String phone;
-	 
-	 @Column(unique = true)
-	private  String email;
-	
-	 @Enumerated(EnumType.STRING)
-	    @Column(nullable = false)
-	private  EnumStatus status;
-	 
-	 @Column(nullable = false)
-	 private String city;
-	 
-	 @Column(nullable = false)
-	 private String address;
-	 
-	 @ManyToOne(fetch = FetchType.LAZY)
-	 @JoinColumn(name = "agency_id", nullable = false)
-	 private Agency agency;
+	private String name;
+
+	@Column(length = 20)
+	private String phone;
+
+	@Column(unique = true)
+	private String email;
+
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private EnumStatus status;
+
+	@Column(nullable = false)
+	private String city;
+
+	@Column(nullable = false)
+	private String address;
+
+	@Enumerated(EnumType.STRING)
+	private QueueAlgorithm queueAlgorithm;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "agency_id", nullable = false)
+	private Agency agency;
 }

@@ -22,20 +22,20 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class Agency extends BaseEntity {
-	
+
 	@Column(nullable = false, unique = true)
-	private  String code;
-	
+	private String code;
+
 	@Column(nullable = false)
-	private  String name;
-	
-	 @Column(length = 20)
-	private  String phone;
-	 
-	 @Column(unique = true)
-	private  String email;
-	
-	 @Enumerated(EnumType.STRING)
-	    @Column(nullable = false)
-	private  EnumStatus status;
+	private String name;
+
+	@Column(length = 20)
+	private String phone;
+
+	@Column(unique = true)
+	private String email;
+
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private EnumStatus status;
 }

@@ -19,21 +19,21 @@ import lombok.Setter;
 @Builder
 
 public class AgencyRequestDto {
-	 @NotBlank
-	    @Size(max = 20)
-	    private String code;
+	@NotBlank
+	@Size(max = 20)
+	private String code;
 
-	    @NotBlank
-	    @Size(max = 100)
-	    private String name;
+	@NotBlank
+	@Size(max = 100)
+	private String name;
 
-	    @Size(max = 20)
-	    private String phone;
+	@Size(max = 20)
+	private String phone;
 
-	    @Email
-	    private String email;
+	@Email
+	private String email;
 
-	    @NotNull
-	    private EnumStatus status;
+	@NotNull
+	private EnumStatus status;
 
 }

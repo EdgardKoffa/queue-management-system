@@ -8,7 +8,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,17 +23,17 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TicketHistory extends BaseEntity {
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ticket_id",nullable = false)
+	@JoinColumn(name = "ticket_id", nullable = false)
 	private Ticket ticket;
-	
-	//private Emplyee employee;
-	
+
+	// private Emplyee employee;
+
 	@Column
 	private TicketHistoryActions action;
-	
+
 	@Column(nullable = true)
 	private String comment;
-	
+
 }

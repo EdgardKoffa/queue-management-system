@@ -9,21 +9,18 @@ import com.nsglobal.queue.bankservice.dto.BankServiceRequestDto;
 import com.nsglobal.queue.bankservice.dto.BankServiceResponseDto;
 import com.nsglobal.queue.bankservice.entity.BankService;
 
-
 @Mapper(componentModel = "spring")
 public interface BankServiceMapper {
 
-  @Mapping(target = "branch", ignore = true)
+	@Mapping(target = "branch", ignore = true)
 	public BankService toEntity(BankServiceRequestDto bankService);
-	
+
 	@Mapping(target = "branchId", source = "branch.id")
-    @Mapping(target = "branchName", source = "branch.name")
+	@Mapping(target = "branchName", source = "branch.name")
 	public BankServiceResponseDto toBrancResponseDto(BankService bankService);
-	
+
 	@Mapping(target = "branchId", source = "branch.id")
-    @Mapping(target = "branchName", source = "branch.name")
+	@Mapping(target = "branchName", source = "branch.name")
 	public List<BankServiceResponseDto> toListBranchResponses(List<BankService> bankService);
- 
+
 }
-
-

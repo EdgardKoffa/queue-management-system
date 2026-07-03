@@ -15,24 +15,19 @@ import com.nsglobal.queue.ticket.entity.TicketSequence;
 import jakarta.persistence.LockModeType;
 
 public interface TicketSequenceRepository extends JpaRepository<TicketSequence, Long> {
-	
-	 Optional<TicketSequence> findByBranchAndServiceAndSequenceDate(
-	            Branch branch,
-	            BankService service,
-	            LocalDate sequenceDate);
-	 
-	 @Lock(LockModeType.PESSIMISTIC_WRITE)
-		@Query("""
-				SELECT ts
-				FROM TicketSequence ts
-				WHERE ts.branch = :branch
-				AND ts.service = :service
-				AND ts.sequenceDate = :sequenceDate
-				""")
-		 Optional<TicketSequence> findForUpdate(
-				 @Param("branch") Branch branch, 
-				 @Param("service") BankService service,
-		         @Param("sequenceDate") LocalDate sequenceDate
-		         );
+
+	Optional<TicketSequence> findByBranchAndServiceAndSequenceDate(Branch branch, BankService service,
+			LocalDate sequenceDate);
+
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
+	@Query("""
+			SELECT ts
+			FROM TicketSequence ts
+			WHERE ts.branch = :branch
+			AND ts.service = :service
+			AND ts.sequenceDate = :sequenceDate
+			""")
+	Optional<TicketSequence> findForUpdate(@Param("branch") Branch branch, @Param("service") BankService service,
+			@Param("sequenceDate") LocalDate sequenceDate);
 
 }

@@ -16,18 +16,18 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class AgencyResponseDto {
-	  private Long id;
+	private Long id;
 
-	    private String code;
+	private String code;
 
-	    private String name;
+	private String name;
 
-	    private String phone;
+	private String phone;
 
-	    private String email;
+	private String email;
 
-	    private EnumStatus status;
+	private EnumStatus status;
 
-	    private LocalDateTime createdAt;
+	private LocalDateTime createdAt;
 
 }

@@ -16,24 +16,23 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CounterResponseDto {
-	
-		private Long id;
 
-	    private String code;
+	private Long id;
 
+	private String code;
 
-	    private Integer number;
+	private Integer number;
 
-	    private String name;
+	private String name;
 
-	    private CounterStatus status;
+	private CounterStatus status;
 
-	    private Boolean active ;
+	private Boolean active;
 
-	    private Long branchId;
-	    
-	    private String branchName;
-	    
-	    private LocalDateTime createdAt;
-	    
+	private Long branchId;
+
+	private String branchName;
+
+	private LocalDateTime createdAt;
+
 }

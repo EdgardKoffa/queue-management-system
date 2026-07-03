@@ -31,39 +31,38 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Counter extends BaseEntity {
-	
-	    @Column(nullable = false, unique = true)
-	    private String code;
 
-	    @Positive
-	    @Column(nullable = false)
-	    private Integer number;
+	@Column(nullable = false, unique = true)
+	private String code;
 
-	    @Column(nullable = false)
-	    private String name;
+	@Positive
+	@Column(nullable = false)
+	private Integer number;
 
-	    @Enumerated(EnumType.STRING)
-	    @Column(nullable = false)
-	    private CounterStatus status;
+	@Column(nullable = false)
+	private String name;
 
-	    @Builder.Default
-	    @Column(nullable = false)
-	    private Boolean active = true;
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private CounterStatus status;
 
-	    @ManyToOne(fetch = FetchType.LAZY)
-	    @JoinColumn(name = "branch_id", nullable = false)
-	    private Branch branch;
-	
-	    /**
-	     * champs supplementaire conseillee dans les traitement plus professionnel
-	     * */
-	    //private String ipAddress;
-	    
-	    //@OneToOne
-	   // private Employee employee;
-	    
-	   // @OneToOne
-	   // private Ticket currentTicket;
+	@Builder.Default
+	@Column(nullable = false)
+	private Boolean active = true;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "branch_id", nullable = false)
+	private Branch branch;
+
+	/**
+	 * champs supplementaire conseillee dans les traitement plus professionnel
+	 */
+	// private String ipAddress;
+
+	// @OneToOne
+	// private Employee employee;
+
+	// @OneToOne
+	// private Ticket currentTicket;
 
 }

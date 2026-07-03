@@ -11,16 +11,16 @@ import com.nsglobal.queue.counter.entity.Counter;
 
 @Mapper(componentModel = "spring")
 public interface CounterMapper {
-	
-	@Mapping(target = "branch",ignore = true)
+
+	@Mapping(target = "branch", ignore = true)
 	public Counter toEntity(CounterRequestDto dto);
-	
-	@Mapping(target = "branchId",source = "branch.id")
-	@Mapping(target = "branchName",source = "branch.name")
+
+	@Mapping(target = "branchId", source = "branch.id")
+	@Mapping(target = "branchName", source = "branch.name")
 	public CounterResponseDto toCounterResponse(Counter counter);
-	
-	@Mapping(target = "branchId",source = "branch.id")
-	@Mapping(target = "branchName",source = "branch.name")
+
+	@Mapping(target = "branchId", source = "branch.id")
+	@Mapping(target = "branchName", source = "branch.name")
 	public List<CounterResponseDto> toListCounterResponseDto(List<Counter> list);
 
 }

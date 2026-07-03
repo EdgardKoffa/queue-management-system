@@ -21,16 +21,16 @@ import lombok.Setter;
 @Setter
 public abstract class BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
+	@CreatedDate
+	private LocalDateTime createdAt;
 
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
-    
-    @Column(nullable = true)
-    private LocalDateTime deletedAt;
+	@LastModifiedDate
+	private LocalDateTime updatedAt;
+
+	@Column(nullable = true)
+	private LocalDateTime deletedAt;
 }

@@ -15,21 +15,21 @@ import lombok.Setter;
 @Setter
 @Builder
 public class BankServiceRequestDto {
-	
+
 	@NotBlank
 	@Size(max = 20)
-	private  String code;
-	
+	private String code;
+
 	@NotBlank
 	@Size(max = 100)
-	private  String name;
-	
+	private String name;
+
 	@NotBlank
 	private String prefix;
-	
+
 	@NotBlank
 	private Integer priority;
-	
+
 	@NotBlank
 	private Integer estimatedDurationMinutes;
 	@NotNull

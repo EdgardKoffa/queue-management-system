@@ -11,10 +11,10 @@ import com.nsglobal.queue.agency.entity.Agency;
 @Mapper(componentModel = "spring")
 public interface AgencyMapper {
 
-    Agency toEntity(AgencyRequestDto dto);
+	Agency toEntity(AgencyRequestDto dto);
 
-    AgencyResponseDto toResponseDto(Agency agency);
-    
-    List<AgencyResponseDto> toListResponseDto(List<Agency> agencies);
+	AgencyResponseDto toResponseDto(Agency agency);
+
+	List<AgencyResponseDto> toListResponseDto(List<Agency> agencies);
 
 }

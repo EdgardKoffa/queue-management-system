@@ -1,14 +1,14 @@
 package com.nsglobal.queue.common.enums;
 
 public enum CounterStatus {
-	 OPEN,
+	OPEN,
 
-	    CLOSED,
+	CLOSED,
 
-	    BUSY,
+	BUSY,
 
-	    PAUSED,
+	PAUSED,
 
-	    OUT_OF_SERVICE
+	OUT_OF_SERVICE
 
 }

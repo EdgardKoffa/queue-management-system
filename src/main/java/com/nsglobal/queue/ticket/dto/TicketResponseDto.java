@@ -18,9 +18,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TicketResponseDto {
-	
+
 	private Long id;
-	
+
 	private String ticketNumber;
 
 	private Integer sequenceNumber;
@@ -28,21 +28,19 @@ public class TicketResponseDto {
 	private LocalDate ticketDate;
 
 	private LocalDateTime issuedAt;
-	
-	
+
 	private TicketStatus status;
 
-	
 	private String branchName;
 	private Long branchId;
-	
+
 	private String counterName;
 	private Long counterId;
-	
+
 	private Long serviceId;
 	private String serviceName;
-	
-	 private TicketPriority priority;
-	 
-	 private LocalDateTime createdAt;
+
+	private TicketPriority priority;
+
+	private LocalDateTime createdAt;
 }

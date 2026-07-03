@@ -23,29 +23,29 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping(ApiRoutes.BRANCHES)
 @RequiredArgsConstructor
 public class BranchController {
-	
+
 	private final BranchService branchService;
-	
+
 	@GetMapping
-	public List<BranchResponseDto> findAll(){
+	public List<BranchResponseDto> findAll() {
 		return branchService.findAll();
 	}
-	
+
 	@GetMapping("/{id}")
 	public BranchResponseDto findById(@Valid @PathVariable Long id) {
 		return branchService.findById(id);
 	}
-	
+
 	@PostMapping
 	public BranchResponseDto create(@Valid @RequestBody BranchRequestDto branch) {
 		return branchService.create(branch);
 	}
-	
+
 	@PutMapping("/{id}")
-	public BranchResponseDto update(@Valid @PathVariable Long id,@Valid @RequestBody BranchRequestDto branch) {
+	public BranchResponseDto update(@Valid @PathVariable Long id, @Valid @RequestBody BranchRequestDto branch) {
 		return branchService.update(id, branch);
 	}
-	
+
 	@DeleteMapping("/{id}")
 	void delete(@Valid @PathVariable Long id) {
 		branchService.delete(id);

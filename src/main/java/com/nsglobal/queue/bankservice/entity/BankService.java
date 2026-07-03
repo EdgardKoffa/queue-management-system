@@ -26,28 +26,28 @@ import lombok.Setter;
 @Builder
 public class BankService extends BaseEntity {
 	@Column(nullable = false, unique = true)
-	private  String code;
-	
+	private String code;
+
 	@Column(nullable = false)
-	private  String name;
-	
+	private String name;
+
 	@Column(nullable = false)
 	private String prefix;
-	
+
 	@Min(0)
 	@Column(nullable = false)
 	@Builder.Default
 	private Integer priority = 0;
 
 	@Positive
-	@Column(nullable = false,name="estimated_duration")
+	@Column(nullable = false, name = "estimated_duration")
 	private Integer estimatedDurationMinutes;
 
 	@Builder.Default
 	@Column(nullable = false)
 	private Boolean active = true;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "branch_id",nullable = false)
+	@JoinColumn(name = "branch_id", nullable = false)
 	private Branch branch;
 }

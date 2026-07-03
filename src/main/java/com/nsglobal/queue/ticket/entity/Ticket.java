@@ -24,7 +24,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Entity
 @Table(name = "ticket")
 @Getter
@@ -33,35 +32,35 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Ticket extends BaseEntity {
-	
+
 	@Column
 	private String ticketNumber;
-	
+
 	@Column
 	private Integer sequenceNumber;
-	
+
 	@Column
 	private LocalDate ticketDate;
-	
+
 	@Column(name = "issue_time")
 	private LocalDateTime issueTime;
-	
+
 	@Column(name = "call_time")
 	private LocalDateTime callTime;
-	
+
 	@Column(name = "start_time")
 	private LocalDateTime startTime;
-	
+
 	@Column(name = "end_time")
 	private LocalDateTime endTime;
-	
-	@Column(name = "estimated_waiting",nullable = true)
+
+	@Column(name = "estimated_waiting", nullable = true)
 	private Long estimatedWaiting;
-	
-	@Column(name = "notes",nullable = true)
+
+	@Column(name = "notes", nullable = true)
 	private String notes;
-	
-	@Column(name = "customer_name",nullable = true)
+
+	@Column(name = "customer_name", nullable = true)
 	private String customerName;
 
 	@Column
@@ -70,7 +69,7 @@ public class Ticket extends BaseEntity {
 
 	@Enumerated(EnumType.STRING)
 	private TicketPriority priority;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "branch_id", nullable = false)
 	private Branch branch;

@@ -5,17 +5,16 @@ import java.util.List;
 import com.nsglobal.queue.agency.dto.AgencyRequestDto;
 import com.nsglobal.queue.agency.dto.AgencyResponseDto;
 
-
 public interface AgencyService {
-	
-	  AgencyResponseDto create(AgencyRequestDto agency);
 
-	  AgencyResponseDto update(Long id, AgencyRequestDto agency);
+	AgencyResponseDto create(AgencyRequestDto agency);
 
-	  AgencyResponseDto findById(Long id);
+	AgencyResponseDto update(Long id, AgencyRequestDto agency);
 
-	    List<AgencyResponseDto> findAll();
+	AgencyResponseDto findById(Long id);
 
-	    void delete(Long id);
+	List<AgencyResponseDto> findAll();
+
+	void delete(Long id);
 
 }

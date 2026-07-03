@@ -14,24 +14,24 @@ import lombok.Setter;
 @Setter
 @Builder
 public class BankServiceResponseDto {
-	
+
 	private Long id;
-	
-	private  String code;
-	
-	private  String name;
-	
+
+	private String code;
+
+	private String name;
+
 	private String prefix;
-	
+
 	private Integer priority;
 
 	private Integer estimatedDurationMinutes;
 
 	private Boolean active;
-	
+
 	private Long branchId;
-	
+
 	private String branchName;
-	
+
 	private LocalDateTime createdAt;
 }

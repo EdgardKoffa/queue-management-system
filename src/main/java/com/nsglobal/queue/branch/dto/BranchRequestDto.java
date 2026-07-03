@@ -17,32 +17,32 @@ import lombok.Setter;
 @Builder
 
 public class BranchRequestDto {
-	
-	 @NotBlank
-	 @Size(max = 20)
-	private String code;
-	 
-	 @NotBlank
-	 @Size(max = 100)
-	private String name;
-	 
-	 @NotBlank
-	 @Size(max = 100)
-	private String city;
-	 
-	 @NotBlank
-	  @Size(max = 20)
-	private String phone;
-	 
-	 @Email
-	private String email;
-	 
+
 	@NotBlank
-	private String address; 
-	
+	@Size(max = 20)
+	private String code;
+
+	@NotBlank
+	@Size(max = 100)
+	private String name;
+
+	@NotBlank
+	@Size(max = 100)
+	private String city;
+
+	@NotBlank
+	@Size(max = 20)
+	private String phone;
+
+	@Email
+	private String email;
+
+	@NotBlank
+	private String address;
+
 	@NotNull
 	private String status;
-	
+
 	@NotNull
-	private  Long agencyId;
+	private Long agencyId;
 }

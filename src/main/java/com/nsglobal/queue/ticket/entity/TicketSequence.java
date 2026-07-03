@@ -1,7 +1,6 @@
 package com.nsglobal.queue.ticket.entity;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import com.nsglobal.queue.bankservice.entity.BankService;
 import com.nsglobal.queue.branch.entity.Branch;
@@ -21,16 +20,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(
-	    name = "ticket_sequence",
-	    uniqueConstraints = {
-	        @UniqueConstraint(columnNames = {
-	            "branch_id",
-	            "service_id",
-	            "sequence_date"
-	        })
-	    }
-	)
+@Table(name = "ticket_sequence", uniqueConstraints = {
+		@UniqueConstraint(columnNames = { "branch_id", "service_id", "sequence_date" }) })
 @Getter
 @Setter
 @Builder
@@ -38,18 +29,18 @@ import lombok.Setter;
 @AllArgsConstructor
 public class TicketSequence extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "branch_id")
-    private Branch branch;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "branch_id")
+	private Branch branch;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_id")
-    private BankService service;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "service_id")
+	private BankService service;
 
-    @Column(name = "sequence_date", nullable = false)
-    private LocalDate sequenceDate;
+	@Column(name = "sequence_date", nullable = false)
+	private LocalDate sequenceDate;
 
-    @Column(nullable = false)
-    private Integer lastNumber;
+	@Column(nullable = false)
+	private Integer lastNumber;
 
 }
