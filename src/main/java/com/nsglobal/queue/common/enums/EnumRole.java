@@ -11,8 +11,10 @@ public enum EnumRole {
 
 	OPERATOR,
 
-	DISPLAY,
+	DISPLAY,//ACCUEIL
 
 	AUDITOR,
+	
+	
 
 }

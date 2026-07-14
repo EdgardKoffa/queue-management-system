@@ -14,6 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class QueueDisplayDto {
+	
 	private Long ticketId;
 
 	private String ticketNumber;

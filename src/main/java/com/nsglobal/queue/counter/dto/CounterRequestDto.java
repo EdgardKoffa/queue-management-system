@@ -37,4 +37,5 @@ public class CounterRequestDto {
 
 	@NotNull
 	private Long branchId;
+	
 }

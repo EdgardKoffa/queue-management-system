@@ -4,6 +4,7 @@ package com.nsglobal.queue.counter.entity;
 import com.nsglobal.queue.branch.entity.Branch;
 import com.nsglobal.queue.common.entity.BaseEntity;
 import com.nsglobal.queue.common.enums.CounterStatus;
+import com.nsglobal.queue.user.entity.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -53,7 +54,12 @@ public class Counter extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "branch_id", nullable = false)
 	private Branch branch;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+	private User operator;
 
+	
 	/**
 	 * champs supplementaire conseillee dans les traitement plus professionnel
 	 */

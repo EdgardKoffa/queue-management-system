@@ -16,4 +16,17 @@ public interface CounterService {
 	List<CounterResponseDto> findAll();
 
 	void delete(Long id);
+	
+	CounterResponseDto open(Long counterId);
+
+	CounterResponseDto close(Long counterId);
+
+	CounterResponseDto assign(Long counterId,Long operatorId);
+
+	CounterResponseDto release(Long counterId);
+	
+	void openAllCounters();
+
+	void closeAllCounters();
+	//TicketResponseDto callNext(Long counterId);
 }

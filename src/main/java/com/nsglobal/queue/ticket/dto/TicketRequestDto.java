@@ -23,6 +23,15 @@ public class TicketRequestDto {
 
 	@Nullable
 	private String ticketNumber;
+	
+	@Nullable
+	private String phone;
+	
+	@Nullable
+	private String email;
+	
+	@Nullable
+	private String language;
 
 	@Nullable
 	private Integer sequenceNumber;

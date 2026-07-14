@@ -3,6 +3,7 @@ package com.nsglobal.queue.ticket.repository;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
@@ -16,6 +17,8 @@ import jakarta.persistence.LockModeType;
 
 public interface TicketSequenceRepository extends JpaRepository<TicketSequence, Long> {
 
+	
+	@EntityGraph(attributePaths = {"branch","service"})
 	Optional<TicketSequence> findByBranchAndServiceAndSequenceDate(Branch branch, BankService service,
 			LocalDate sequenceDate);
 

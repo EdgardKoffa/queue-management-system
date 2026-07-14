@@ -24,6 +24,7 @@ public interface TicketMapper {
 	@Mapping(target = "branchName", source = "branch.name")
 	@Mapping(target = "serviceName", source = "service.name")
 	@Mapping(target = "counterName", source = "counter.name")
+	
 	public TicketResponseDto toTicketResponsDto(Ticket ticket);
 
 	@Mapping(target = "branchId", source = "branch.id")

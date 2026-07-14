@@ -22,12 +22,26 @@ public class BankServiceServiceImpl implements BankServiceService {
 	private final BankServiceRepository bankserviceRepo;
 	private final BankServiceMapper mapper;
 	private final BranchRepository branchRepo;
-
+	
+	private BankService getById(Long id) {
+		BankService serv=bankserviceRepo.findById(id)
+				.orElseThrow(() -> new RuntimeException("Ce service est introuvable."));
+		
+		if(serv.getActive()==false) {
+			throw new RuntimeException("Ce service n'est plus actif pour le moment.");
+		}
+		
+		return serv;
+	}
+	
 	@Override
 	public BankServiceResponseDto create(BankServiceRequestDto bankService) {
+		
 		Branch branch = branchRepo.findById(bankService.getBranchId())
-				.orElseThrow(() -> new RuntimeException("Branche introuvable pour creer le service."));
+				.orElseThrow(() -> new RuntimeException("Succursale introuvable pour creer le service."));
+		
 		BankService bk = mapper.toEntity(bankService);
+		
 		bk.setBranch(branch);
 
 		return mapper.toBrancResponseDto(bankserviceRepo.save(bk));
@@ -36,8 +50,7 @@ public class BankServiceServiceImpl implements BankServiceService {
 	@Override
 	public BankServiceResponseDto update(Long id, BankServiceRequestDto dto) {
 
-		BankService existance = bankserviceRepo.findById(id)
-				.orElseThrow(() -> new RuntimeException("Ce service est introuvable."));
+		BankService existance = getById(id);
 		BankService bankService = mapper.toEntity(dto);
 
 		existance.setCode(bankService.getCode());
@@ -54,7 +67,7 @@ public class BankServiceServiceImpl implements BankServiceService {
 	@Override
 	public BankServiceResponseDto findById(Long id) {
 
-		return mapper.toBrancResponseDto(bankserviceRepo.findById(id).orElseThrow());
+		return mapper.toBrancResponseDto(getById(id));
 	}
 
 	@Override

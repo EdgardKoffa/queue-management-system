@@ -18,6 +18,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -56,6 +57,9 @@ public class Ticket extends BaseEntity {
 
 	@Column(name = "estimated_waiting", nullable = true)
 	private Long estimatedWaiting;
+	
+	@Column(name = "estimated_operation", nullable = true)
+	private Long estimatedOperation;
 
 	@Column(name = "notes", nullable = true)
 	private String notes;
@@ -66,6 +70,13 @@ public class Ticket extends BaseEntity {
 	@Column
 	@Enumerated(EnumType.STRING)
 	private TicketStatus status;
+	
+	@Column(nullable = true)
+	private String phone;
+	
+	@Column(nullable=true)
+	@Email(message = "L'adresse email est invalide.")
+	private String email;
 
 	@Enumerated(EnumType.STRING)
 	private TicketPriority priority;

@@ -10,6 +10,7 @@ import com.nsglobal.queue.agency.entity.Agency;
 import com.nsglobal.queue.agency.mapper.AgencyMapper;
 import com.nsglobal.queue.agency.repository.AgencyRepository;
 import com.nsglobal.queue.agency.service.AgencyService;
+import com.nsglobal.queue.common.enums.EnumStatus;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,7 +21,17 @@ public class AgencyServiceImpl implements AgencyService {
 	private final AgencyRepository agencyRepository;
 
 	private final AgencyMapper mapper;
-
+	
+	private Agency getById(Long id) {
+		Agency agc=agencyRepository.findById(id).orElseThrow(
+				()->new RuntimeException("Aucune agence trouvée.")
+				);
+		if(agc.getStatus()!=EnumStatus.ACTIVE) {
+			throw new RuntimeException("Cette agence n'est pas active.");
+		}
+			return agc;
+	}
+	
 	@Override
 	public AgencyResponseDto create(AgencyRequestDto agency) {
 		return mapper.toResponseDto(agencyRepository.save(mapper.toEntity(agency)));
@@ -28,7 +39,7 @@ public class AgencyServiceImpl implements AgencyService {
 
 	@Override
 	public AgencyResponseDto findById(Long id) {
-		return mapper.toResponseDto(agencyRepository.findById(id).orElseThrow());
+		return mapper.toResponseDto(getById(id));
 	}
 
 	@Override
@@ -45,7 +56,7 @@ public class AgencyServiceImpl implements AgencyService {
 	@Override
 	public AgencyResponseDto update(Long id, AgencyRequestDto dto) {
 
-		Agency existingAgency = agencyRepository.findById(id).orElseThrow();// findById(id);
+		Agency existingAgency = getById(id);// findById(id);
 
 		Agency agency = mapper.toEntity(dto);
 		existingAgency.setCode(agency.getCode());

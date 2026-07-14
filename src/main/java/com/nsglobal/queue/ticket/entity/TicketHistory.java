@@ -1,5 +1,7 @@
 package com.nsglobal.queue.ticket.entity;
 
+import java.time.LocalDateTime;
+
 import com.nsglobal.queue.common.entity.BaseEntity;
 import com.nsglobal.queue.common.enums.TicketHistoryActions;
 
@@ -29,9 +31,13 @@ public class TicketHistory extends BaseEntity {
 	private Ticket ticket;
 
 	// private Emplyee employee;
-
+	
 	@Column
 	private TicketHistoryActions action;
+	
+	@Column
+	private LocalDateTime reccordTime;
+	
 
 	@Column(nullable = true)
 	private String comment;

@@ -6,7 +6,9 @@ public enum TicketStatus {
 
 	WAITING, // en attente
 
-	CALLED, // appelé
+	RECALLED, // rappelé 
+	
+	CALLED, // appelé 
 
 	IN_PROGRESS, // en cours
 

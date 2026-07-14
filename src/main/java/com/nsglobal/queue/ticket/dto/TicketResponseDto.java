@@ -27,7 +27,11 @@ public class TicketResponseDto {
 
 	private LocalDate ticketDate;
 
-	private LocalDateTime issuedAt;
+	private LocalDateTime issueTime;
+	
+	private LocalDateTime startTime;
+	
+	private LocalDateTime endTime;
 
 	private TicketStatus status;
 

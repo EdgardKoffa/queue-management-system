@@ -2,6 +2,8 @@ package com.nsglobal.queue.branch.controller;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +17,7 @@ import com.nsglobal.queue.branch.dto.BranchRequestDto;
 import com.nsglobal.queue.branch.dto.BranchResponseDto;
 import com.nsglobal.queue.branch.service.BranchService;
 import com.nsglobal.queue.common.constant.ApiRoutes;
+import com.nsglobal.queue.common.constant.HasRoleNames;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,30 +25,36 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping(ApiRoutes.BRANCHES)
 @RequiredArgsConstructor
+@Validated
 public class BranchController {
 
 	private final BranchService branchService;
-
+	
+	@PreAuthorize(HasRoleNames.HAS_SUPER_ADMIN)
 	@GetMapping
 	public List<BranchResponseDto> findAll() {
 		return branchService.findAll();
 	}
-
+	
+	@PreAuthorize(HasRoleNames.HAS_SUPER_ADMIN)
 	@GetMapping("/{id}")
 	public BranchResponseDto findById(@Valid @PathVariable Long id) {
 		return branchService.findById(id);
 	}
-
+	
+	@PreAuthorize(HasRoleNames.HAS_SUPER_ADMIN)
 	@PostMapping
 	public BranchResponseDto create(@Valid @RequestBody BranchRequestDto branch) {
 		return branchService.create(branch);
 	}
-
+	
+	@PreAuthorize(HasRoleNames.HAS_SUPER_ADMIN)
 	@PutMapping("/{id}")
 	public BranchResponseDto update(@Valid @PathVariable Long id, @Valid @RequestBody BranchRequestDto branch) {
 		return branchService.update(id, branch);
 	}
-
+	
+	@PreAuthorize(HasRoleNames.HAS_SUPER_ADMIN)
 	@DeleteMapping("/{id}")
 	void delete(@Valid @PathVariable Long id) {
 		branchService.delete(id);

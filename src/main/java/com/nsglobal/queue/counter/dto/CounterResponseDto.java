@@ -34,5 +34,9 @@ public class CounterResponseDto {
 	private String branchName;
 
 	private LocalDateTime createdAt;
+	
+	private Long operatorId;
+	
+	private String operatorUserName;
 
 }

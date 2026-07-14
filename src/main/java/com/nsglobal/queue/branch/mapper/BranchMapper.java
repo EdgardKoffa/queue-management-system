@@ -13,6 +13,7 @@ import com.nsglobal.queue.branch.entity.Branch;
 public interface BranchMapper {
 
 	@Mapping(target = "agency", ignore = true)
+	@Mapping(target = "queueAlgorithm", ignore = true)
 	public Branch toEntity(BranchRequestDto branch);
 
 	@Mapping(target = "agencyId", source = "agency.id")

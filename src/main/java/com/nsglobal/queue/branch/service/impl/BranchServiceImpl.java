@@ -12,6 +12,7 @@ import com.nsglobal.queue.branch.entity.Branch;
 import com.nsglobal.queue.branch.mapper.BranchMapper;
 import com.nsglobal.queue.branch.repository.BranchRepository;
 import com.nsglobal.queue.branch.service.BranchService;
+import com.nsglobal.queue.common.enums.EnumStatus;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,7 +23,19 @@ public class BranchServiceImpl implements BranchService {
 	private final BranchRepository brancRepo;
 	private final BranchMapper mapper;
 	private final AgencyRepository agencyRepo;
-
+	
+	private final Branch getById(Long id) {
+		
+		Branch branch = brancRepo.findById(id)
+				.orElseThrow(() -> new RuntimeException("La succursale de la banque introuvable"));
+		
+		if(branch.getStatus()!=EnumStatus.ACTIVE) {
+			throw new RuntimeException("La succursa (Agence)le de la banque n'est active. ");
+		}
+		
+		return branch;
+	}
+	
 	@Override
 	public BranchResponseDto create(BranchRequestDto branch) {
 		Agency agency = agencyRepo.findById(branch.getAgencyId())
@@ -35,8 +48,8 @@ public class BranchServiceImpl implements BranchService {
 	@Override
 	public BranchResponseDto update(Long id, BranchRequestDto dto) {
 
-		Branch existanceBranch = brancRepo.findById(id)
-				.orElseThrow(() -> new RuntimeException("Cette branche de l'agence introuvable"));
+		Branch existanceBranch = getById(id);
+		
 		Branch branch = mapper.toEntity(dto);
 
 		existanceBranch.setCity(branch.getCity());
@@ -54,7 +67,7 @@ public class BranchServiceImpl implements BranchService {
 	@Override
 	public BranchResponseDto findById(Long id) {
 
-		return mapper.toBrancResponseDto(brancRepo.findById(id).orElseThrow());
+		return mapper.toBrancResponseDto( getById(id));
 	}
 
 	@Override

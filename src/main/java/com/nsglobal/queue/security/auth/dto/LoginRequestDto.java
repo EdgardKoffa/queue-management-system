@@ -1,22 +1,17 @@
-package com.nsglobal.queue.user.dto;
+package com.nsglobal.queue.security.auth.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
-@AllArgsConstructor
 public class LoginRequestDto {
-	
-	@NotBlank
+	@NotBlank(message = "Le nom d'utilisateur est obligatoire")
 	private String userName;
 	
-	@NotBlank
+	@NotBlank(message = "Le mot de passe est obligatoire")
 	@NotEmpty
 	private String password;
 }
