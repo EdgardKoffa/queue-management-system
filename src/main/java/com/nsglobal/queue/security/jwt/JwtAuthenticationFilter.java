@@ -37,10 +37,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		// recuperation de token par le header de la requette http par la cle
 		// Authorization
 		String header = request.getHeader("Authorization");
-
+		//System.out.println("doFilterInternal => "+request.getLocalAddr()+"\n"+request.getLocalName());
+		
 		// s'il n'y a pas de token
 		if (header == null || !header.startsWith("Bearer ")) {
-
+			
 			filterChain.doFilter(request, response);
 
 			return;
@@ -67,6 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		// base
 		UserDetails user = userDetails.loadUserByUsername(username);
 		
+		//System.out.println("\n==============\n---doFilterInternal  "+user.getAuthorities());
 		//
 		UsernamePasswordAuthenticationToken authentication =
 
@@ -77,6 +79,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 						null,
 
 						user.getAuthorities());
+		
 		//
 		authentication.setDetails(
 
@@ -90,6 +93,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		
 		//
 		filterChain.doFilter(request, response);
+		//System.out.println("\nrequest ===> "+request.getPathInfo()+"\n"+request.getRemoteUser());
 
 	}
 

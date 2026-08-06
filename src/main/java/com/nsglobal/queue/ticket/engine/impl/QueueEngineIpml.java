@@ -5,6 +5,9 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nsglobal.queue.audit.enums.AuditActionEnum;
+import com.nsglobal.queue.audit.enums.ModulesNameEnum;
+import com.nsglobal.queue.audit.service.AuditService;
 import com.nsglobal.queue.branch.entity.Branch;
 import com.nsglobal.queue.common.enums.CounterActions;
 import com.nsglobal.queue.common.enums.CounterStatus;
@@ -46,10 +49,16 @@ public class QueueEngineIpml implements QueueEngine {
 	public final QueueStrategyFactory factory;
 	// wesocket messaging
 	private final QueueNotificationService notificationService;
+	
+	private final AuditService auditService;
+	
 
 	private void reccordTicketHistory(Ticket tkt, TicketHistoryActions action, String comment) {
 		// Sauvegarde Historique
-		TicketHistory histo = TicketHistory.builder().ticket(tkt).action(action).comment(comment)
+		TicketHistory histo = TicketHistory
+				.builder()
+				.ticket(tkt)
+				.action(action).comment(comment)
 				.reccordTime(LocalDateTime.now()).build();
 		ticketHistoRepo.save(histo);
 	}
@@ -57,21 +66,51 @@ public class QueueEngineIpml implements QueueEngine {
 	private void reccordCounterHistory(Counter counter, CounterActions action, String ipAddress, String operator,
 			String comment) {
 
-		CounterHistory histo = CounterHistory.builder().action(action).assigned_operator(operator).ipAdress(ipAddress)
-				.reccordTime(LocalDateTime.now()).counter(counter).comment(comment).build();
+		CounterHistory histo = CounterHistory
+				.builder().action(action)
+				.assigned_operator(operator)
+				.ipAdress(ipAddress)
+				.reccordTime(LocalDateTime.now())
+				.counter(counter)
+				.comment(comment).build();
 
 		counterHistoryRepo.save(histo);
 	}
 
 	private Counter getCounterById(Long id) {
-		Counter counter = counterRepository.findById(id).orElseThrow(
-				() -> new RuntimeException("Ce guichet n'est pas retrouvé dans le systeme pour l'appel du ticket"));
+		Counter counter = counterRepository
+				.findById(id).orElseThrow(
+				() ->{
+					String msg="Ce guichet n'est pas retrouvé dans le systeme pour l'appel du ticket";
+					auditService.log(
+							AuditActionEnum.CALL_TICKET, 
+							ModulesNameEnum.TICKET,
+							"❌ Echec d'appel du ticket. Cause: %s".formatted(msg),
+							false);
+					
+					return new RuntimeException(msg);
+				}
+				);
+		
+		
 		if (counter.getActive() == false) {
-			throw new RuntimeException("Ce guichet est inactif, impossible d'appeler un ticket");
+			String msg="Ce guichet est inactif, impossible d'appeler un ticket";
+			auditService.log(
+					AuditActionEnum.CALL_TICKET, 
+					ModulesNameEnum.TICKET,
+					"❌ Echec d'appel du ticket. Cause: %s".formatted(msg),
+					false);
+			throw new RuntimeException(msg);
 		}
 		if (counter.getOperator() == null) {
-			throw new RuntimeException(
-					"Aucun opérateur(agent de guichet) n'est assigné à ce guichet. Contactez l'administrateur svp!");
+			String msg=
+					"Aucun opérateur(agent de guichet) n'est assigné à ce guichet. Contactez l'administrateur svp!";
+			auditService.log(
+					AuditActionEnum.CALL_TICKET, 
+					ModulesNameEnum.TICKET,
+					"❌ Echec d'appel du ticket. Cause: %s".formatted(msg),
+					false);
+			throw new RuntimeException(msg);
 		}
 
 		return counter;
@@ -86,8 +125,14 @@ public class QueueEngineIpml implements QueueEngine {
 		Counter counter = getCounterById(counterId);
 
 		if (counter.getStatus() != CounterStatus.OPEN) {
-			throw new RuntimeException(
-					"Ce guichet n'est pas ouvert pour appeler un ticket. Contactez l'administrateur du systeme svp! ");
+			String msg=
+					"Ce guichet n'est pas ouvert pour appeler un ticket. Contactez l'administrateur du systeme svp! ";
+			auditService.log(
+					AuditActionEnum.CALL_TICKET, 
+					ModulesNameEnum.TICKET,
+					"❌ Echec d'appel du ticket. Cause: %s".formatted(msg),
+					false);
+			throw new RuntimeException(msg);
 		}
 
 		User operator = counter.getOperator();
@@ -102,7 +147,13 @@ public class QueueEngineIpml implements QueueEngine {
 		Ticket ticket = selectionStrategy.selectNextTicket(counter);
 
 		if (ticket == null) {
-			throw new RuntimeException("Pas de ticket dans la file d'attente");
+			String msg="Pas de ticket dans la file d'attente";
+			auditService.log(
+					AuditActionEnum.CALL_TICKET, 
+					ModulesNameEnum.TICKET,
+					"❌ Echec d'appel du ticket. Cause: %s".formatted(msg),
+					false);
+			throw new RuntimeException(msg);
 		}
 		counter.setStatus(CounterStatus.BUSY);
 		counterRepository.save(counter);
@@ -140,7 +191,11 @@ public class QueueEngineIpml implements QueueEngine {
 		notificationService.publishAnnouncement(calledticket.getId());
 		notificationService.publishCounterDisplay(counterId);
 		notificationService.publishWaitingScreen();
-
+		auditService.log(
+				AuditActionEnum.CALL_TICKET, 
+				ModulesNameEnum.TICKET,
+				"✅ Succes d'appel du ticket N %s".formatted(calledticket.getTicketNumber()),
+				true);
 		return ticketMapper.toTicketResponsDto(calledticket);
 	}
 
@@ -153,14 +208,29 @@ public class QueueEngineIpml implements QueueEngine {
 		Counter counter = getCounterById(counterId);
 
 		if (counter.getStatus() != CounterStatus.BUSY) {
-			throw new RuntimeException("Ce guichet n'est pas occupé, donc aucun ticket encours");
+			String msg="Ce guichet n'est pas occupé, donc aucun ticket encours";
+			auditService.log(
+					AuditActionEnum.FINISH_TICKET, 
+					ModulesNameEnum.TICKET,
+					"❌ Echec de completer ce ticket. Cause: %s".formatted(msg),
+					false);
+			throw new RuntimeException(msg);
 		}
 
 		User operator = counter.getOperator();
 
 		// recuperer le ticket encours a cet guichet pour le completer
 		Ticket ticketInProgress = ticketrepository.findByCounterIdAndStatus(counterId, TicketStatus.IN_PROGRESS)
-				.orElseThrow(() -> new RuntimeException("Pas de ticket encours pour ce guichet."));
+				.orElseThrow(() -> {
+					String msg="Pas de ticket encours pour ce guichet.";
+					auditService.log(
+							AuditActionEnum.FINISH_TICKET, 
+							ModulesNameEnum.TICKET,
+							"❌ Echec de completer le ticket. Cause: %s".formatted(msg),
+							false);
+				return	new RuntimeException(msg);
+				}
+				);
 
 		// calcul du temps estime
 		LocalDateTime end_time = LocalDateTime.now();
@@ -198,7 +268,11 @@ public class QueueEngineIpml implements QueueEngine {
 		// notificationService.publishAnnouncement(finishedTicket.getId());
 		notificationService.publishCounterDisplay(counterId);
 		notificationService.publishWaitingScreen();
-
+		auditService.log(
+				AuditActionEnum.FINISH_TICKET, 
+				ModulesNameEnum.TICKET,
+				"✅ Le ticket %s est servi avec succes.".formatted(finishedTicket.getTicketNumber()),
+				true);
 		return ticketMapper.toTicketResponsDto(finishedTicket);
 	}
 
@@ -215,22 +289,52 @@ public class QueueEngineIpml implements QueueEngine {
 		Counter counter = getCounterById(curentCounterId);
 
 		if (counter.getStatus() != CounterStatus.BUSY) {
-			throw new RuntimeException("Ce guichet n'est pas occupé, donc aucun ticket encours pour le transfer");
+			String msg="Ce guichet n'est pas occupé, donc aucun ticket encours pour le transfer";
+			auditService.log(
+					AuditActionEnum.TRANSFER_TICKET, 
+					ModulesNameEnum.TICKET,
+					"❌ Echec du transfert du ticket. Cause: %s".formatted(msg),
+					false);
+			throw new RuntimeException(msg);
 		}
 
 		User currentoperator = counter.getOperator();
 
 		// recuperer le ticket encours a cet guichet pour le completer
 		Ticket ticketInProgress = ticketrepository.findByCounterIdAndStatus(curentCounterId, TicketStatus.IN_PROGRESS)
-				.orElseThrow(() -> new RuntimeException("Pas de ticket encours pour ce guichet."));
+				.orElseThrow(() ->{
+					String msg="Pas de ticket encours pour ce guichet.";
+					auditService.log(
+							AuditActionEnum.TRANSFER_TICKET, 
+							ModulesNameEnum.TICKET,
+							"❌ Echec du transfert du ticket. Cause: %s".formatted(msg),
+							false);
+					return new RuntimeException(msg);
+				}
+						);
 
 		// guichet de destination du transfert du ticket
 		Counter destinationCounter = counterRepository
 				.findByIdAndBranchIdAndStatus(destinationCounterId, counter.getBranch().getId(), CounterStatus.OPEN)
-				.orElseThrow(() -> new RuntimeException("Aucun guichet disponible pour le transfert du ticket"));
+				.orElseThrow(() -> {
+					String msg="Aucun guichet disponible pour le transfert du ticket";
+					auditService.log(
+							AuditActionEnum.TRANSFER_TICKET, 
+							ModulesNameEnum.TICKET,
+							"❌ Echec du transfert du ticket. Cause: %s".formatted(msg),
+							false);
+				return	new RuntimeException(msg);
+				}
+						);
 
 		if (destinationCounter.getOperator() == null) {
-			throw new RuntimeException("Le guichet de transfert 'a aucun opérateur assigné");
+			String msg="Le guichet de transfert 'a aucun opérateur assigné";
+			auditService.log(
+					AuditActionEnum.TRANSFER_TICKET, 
+					ModulesNameEnum.TICKET,
+					"❌ Echec du transfert du ticket. Cause: %s".formatted(msg),
+					false);
+			throw new RuntimeException(msg);
 		}
 		// rendre le guichet courant disponible
 		counter.setStatus(CounterStatus.OPEN);
@@ -267,7 +371,12 @@ public class QueueEngineIpml implements QueueEngine {
 		notificationService.publishCounterDisplay(curentCounterId);
 		notificationService.publishCounterDisplay(destinationCounterId);
 		notificationService.publishWaitingScreen();
-
+		
+		auditService.log(
+				AuditActionEnum.TRANSFER_TICKET, 
+				ModulesNameEnum.TICKET,
+				"✅ Succes du transfert du ticket %s .".formatted(transfered.getTicketNumber()),
+				false);
 		return ticketMapper.toTicketResponsDto(transfered);
 	}
 
@@ -276,14 +385,29 @@ public class QueueEngineIpml implements QueueEngine {
 		Counter counter = getCounterById(counterId);
 
 		if (counter.getStatus() != CounterStatus.BUSY) {
-			throw new RuntimeException("Ce guichet n'est pas occupé, donc aucun ticket encours");
+			String msg="Ce guichet n'est pas occupé, donc aucun ticket encours";
+			auditService.log(
+					AuditActionEnum.CANCEL_TICKET, 
+					ModulesNameEnum.TICKET,
+					"❌ Echec d'annulation du ticket. Cause: %s".formatted(msg),
+					false);
+			throw new RuntimeException(msg);
 		}
 
 		User operator = counter.getOperator();
 
 		// recuperer le ticket encours a cet guichet pour le completer
 		Ticket ticketInProgress = ticketrepository.findByCounterIdAndStatus(counterId, TicketStatus.IN_PROGRESS)
-				.orElseThrow(() -> new RuntimeException("Pas de ticket encours pour ce guichet."));
+				.orElseThrow(() ->{
+					String msg="Pas de ticket encours pour ce guichet.";
+					auditService.log(
+							AuditActionEnum.CANCEL_TICKET, 
+							ModulesNameEnum.TICKET,
+							"❌ Echec d'annulation du ticket. Cause: %s".formatted(msg),
+							false);
+				return	new RuntimeException(msg);
+				}
+				);
 
 		ticketInProgress.setStatus(TicketStatus.CANCELLED);
 		ticketInProgress.setCounter(null);
@@ -306,6 +430,11 @@ public class QueueEngineIpml implements QueueEngine {
 		// =======display screens=======================
 		notificationService.publishCounterDisplay(counterId);
 		notificationService.publishWaitingScreen();
+		auditService.log(
+				AuditActionEnum.CANCEL_TICKET, 
+				ModulesNameEnum.TICKET,
+				"✅ Succes d'annulation du ticket %s .".formatted(canceledTicket.getTicketNumber()),
+				false);
 		return ticketMapper.toTicketResponsDto(canceledTicket);
 	}
 

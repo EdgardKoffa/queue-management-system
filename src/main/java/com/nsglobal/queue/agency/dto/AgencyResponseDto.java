@@ -25,9 +25,14 @@ public class AgencyResponseDto {
 	private String phone;
 
 	private String email;
+	
+	private String address;
+	
+	private String city;
 
 	private EnumStatus status;
 
 	private LocalDateTime createdAt;
+	private LocalDateTime deletedAt;
 
 }

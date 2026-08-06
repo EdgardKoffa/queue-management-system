@@ -6,6 +6,9 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nsglobal.queue.audit.enums.AuditActionEnum;
+import com.nsglobal.queue.audit.enums.ModulesNameEnum;
+import com.nsglobal.queue.audit.service.AuditService;
 import com.nsglobal.queue.branch.entity.Branch;
 import com.nsglobal.queue.branch.repository.BranchRepository;
 import com.nsglobal.queue.common.enums.CounterActions;
@@ -41,14 +44,20 @@ public class CounterServiceImpl implements CounterService {
 	
 	private final QueueNotificationService notification;
 	
+	private final AuditService auditservice;
+	
 	private Counter getById(Long id) {
 		
 		Counter counter=counterRepo.findById(id)
 				.orElseThrow(
-						()-> new RuntimeException("Impossible de trouver le guichet")
+						()->{
+							
+						return	new RuntimeException("Impossible de trouver le guichet");
+						}
 						);
 		
 		if(counter.getActive()==false) {
+			
 			throw new RuntimeException("Le guichet %s N° %d est désactivé."
 					.formatted(counter.getName(),counter.getNumber()));
 		}
@@ -124,12 +133,25 @@ public class CounterServiceImpl implements CounterService {
 		Counter counter=getById(counterId);
 		
 		if(counter.getStatus()==CounterStatus.OPEN) {
-			throw new RuntimeException("Le guichet %s N° %d est déjà en service"
-					.formatted(counter.getName(),counter.getNumber()));
+			String msg="Le guichet %s N° %d est déjà en service"
+					.formatted(counter.getName(),counter.getNumber());
+			auditservice.log(
+					AuditActionEnum.OPEN_COUNTER, 
+					ModulesNameEnum.COUNTER,
+					"❌ Echec d'ouverture du guichet. Cause: %s".formatted(msg), 
+					false);
+			
+			throw new RuntimeException(msg);
 		}
 		if(counter.getStatus()==CounterStatus.OUT_OF_SERVICE) {
-			throw new RuntimeException("Le guichet %s N° %d est en hors service"
-					.formatted(counter.getName(),counter.getNumber()));
+			String msg="Le guichet %s N° %d est en hors service"
+					.formatted(counter.getName(),counter.getNumber());
+			auditservice.log(
+					AuditActionEnum.OPEN_COUNTER, 
+					ModulesNameEnum.COUNTER,
+					"❌ Echec d'ouverture du guichet. Cause: %s".formatted(msg), 
+					false);
+			throw new RuntimeException(msg);
 		}
 		if(counter.getStatus()==CounterStatus.BUSY) {
 			throw new RuntimeException("Le guichet %s N° %d est déjà en service"
@@ -137,8 +159,14 @@ public class CounterServiceImpl implements CounterService {
 		}
 		
 		if(counter.getOperator()==null) {
-			throw new RuntimeException("Aucun opérateur n'est assigné  au guichet %s N° %d."
-					.formatted(counter.getName(),counter.getNumber()));
+			String msg="Aucun opérateur n'est assigné  au guichet %s N° %d."
+					.formatted(counter.getName(),counter.getNumber());
+			auditservice.log(
+					AuditActionEnum.OPEN_COUNTER, 
+					ModulesNameEnum.COUNTER,
+					"❌ Echec d'ouverture du guichet. Cause: %s".formatted(msg), 
+					false);
+			throw new RuntimeException(msg);
 		}
 		
 		counter.setStatus(CounterStatus.OPEN);
@@ -156,7 +184,11 @@ public class CounterServiceImpl implements CounterService {
 				CounterActions.OPENED,
 				null,null,
 				"Overture du guichet");
-		
+		auditservice.log(
+				AuditActionEnum.OPEN_COUNTER, 
+				ModulesNameEnum.COUNTER,
+				"✅ Succes d'ouverture du guichet %s .".formatted(openedCounter.getName()), 
+				true);
 		return mapper.toCounterResponse(openedCounter);
 		
 	}
@@ -171,15 +203,27 @@ public class CounterServiceImpl implements CounterService {
 		Counter counter=getById(counterId);
 		
 		if(counter.getStatus()==CounterStatus.CLOSED ) {
-			throw new RuntimeException("Le guichet %s N° %d est déjà fermé."
-					.formatted(counter.getName(),counter.getNumber()));
+			String msg="Le guichet %s N° %d est déjà fermé."
+					.formatted(counter.getName(),counter.getNumber());
+			auditservice.log(
+					AuditActionEnum.CLOSE_COUNTER, 
+					ModulesNameEnum.COUNTER,
+					"❌ Echec de fermeture du guichet. Cause: %s".formatted(msg), 
+					false);
+			throw new RuntimeException(msg);
 		}
 		
 		boolean isCounterBusy=ticketRepo.existsByCounterIdAndStatus(counterId, TicketStatus.IN_PROGRESS);
 		
 		if(isCounterBusy) {
-			throw new RuntimeException("Le guichet %s N° %d a traitement encours."
-					.formatted(counter.getName(),counter.getNumber()));
+			String msg="Le guichet %s N° %d a traitement encours."
+					.formatted(counter.getName(),counter.getNumber());
+			auditservice.log(
+					AuditActionEnum.CLOSE_COUNTER, 
+					ModulesNameEnum.COUNTER,
+					"❌ Echec de fermeture du guichet. Cause: %s".formatted(msg), 
+					false);
+			throw new RuntimeException(msg);
 		}
 		counter.setStatus(CounterStatus.CLOSED);
 		
@@ -196,7 +240,11 @@ public class CounterServiceImpl implements CounterService {
 				CounterActions.CLOSED,
 				null,null,
 				"Fermeture du guichet");
-		
+		auditservice.log(
+				AuditActionEnum.CLOSE_COUNTER, 
+				ModulesNameEnum.COUNTER,
+				"✅ Succes de fermeture du guichet %s .".formatted(closedCounter.getName()), 
+				true);
 		return mapper.toCounterResponse(closedCounter);
 	}
 
@@ -212,11 +260,25 @@ public class CounterServiceImpl implements CounterService {
 		boolean isOperatorAssigned=counterRepo.existsByOperatorId(operatorId);
 		
 		if(isOperatorAssigned==true) {
-			throw new RuntimeException("L'opérateur déjà assigné à un guichet.");
+			String msg="L'opérateur déjà assigné à un guichet.";
+			auditservice.log(
+					AuditActionEnum.ASSIGN_OPERATOR, 
+					ModulesNameEnum.COUNTER,
+					"❌ Echec d'assignation d'un opérateur au guichet. Cause: %s".formatted(msg), 
+					false);
+			throw new RuntimeException(msg);
 		}
 		
 		User operator=userRepo.findById(operatorId).orElseThrow(
-				()->new RuntimeException("Cet L'opérateur est introuvable.")
+				()->{
+					String msg="Cet L'opérateur est introuvable.";
+					auditservice.log(
+							AuditActionEnum.ASSIGN_OPERATOR, 
+							ModulesNameEnum.COUNTER,
+							"❌ Echec d'assignation d'un opérateur au guichet. Cause: %s".formatted(msg), 
+							false);
+					return new RuntimeException(msg);
+				}
 				);
 		
 		counter.setOperator(operator);	
@@ -231,6 +293,11 @@ public class CounterServiceImpl implements CounterService {
 				CounterActions.ASSIGNED_OPERATOR,
 				null,operator.getEmail(),
 				"l'opérateur est assigné au guichet");
+		auditservice.log(
+				AuditActionEnum.ASSIGN_OPERATOR, 
+				ModulesNameEnum.COUNTER,
+				"✅ l'opérateur %s est assigné au guichet %s .".formatted(operator.getUserName(),counter.getName()), 
+				true);
 		return mapper.toCounterResponse(counterRepo.save(counter));
 	}
 
@@ -246,10 +313,22 @@ public class CounterServiceImpl implements CounterService {
 		User operator=counter.getOperator();
 		
 		if(operator==null) {
-			throw new RuntimeException("Aucun opérateur n'est assigné à cet guichet.");
+			String msg="Aucun opérateur n'est assigné à cet guichet.";
+			auditservice.log(
+					AuditActionEnum.ASSIGN_OPERATOR, 
+					ModulesNameEnum.COUNTER,
+					"❌ Echec de retraction d'un opérateur au guichet. Cause: %s".formatted(msg), 
+					false);
+			throw new RuntimeException(msg);
 		}
 		if(counter.getStatus()!=CounterStatus.CLOSED||counter.getStatus()!=CounterStatus.OUT_OF_SERVICE) {
-			throw new RuntimeException("Le guichet est occupé par l'opérateur.");
+			String msg="Le guichet est occupé par l'opérateur.";
+			auditservice.log(
+					AuditActionEnum.ASSIGN_OPERATOR, 
+					ModulesNameEnum.COUNTER,
+					"❌ Echec de retraction d'un opérateur au guichet. Cause: %s".formatted(msg), 
+					false);
+			throw new RuntimeException(msg);
 		}
 		counter.setOperator(null);
 		
@@ -263,7 +342,11 @@ public class CounterServiceImpl implements CounterService {
 				CounterActions.RELEASED_OPRATOR,
 				null,operator.getEmail(),
 				"l'opérateur est retiré du guichet");
-		
+		auditservice.log(
+				AuditActionEnum.RELEASE_COUNTER, 
+				ModulesNameEnum.COUNTER,
+				"✅ l'opérateur %s est retiré du guichet %s .".formatted(operator.getUserName(),counter.getName()), 
+				true);
 		return mapper.toCounterResponse(counterRepo.save(counter));
 	}
 

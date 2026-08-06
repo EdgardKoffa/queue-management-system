@@ -8,6 +8,9 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nsglobal.queue.audit.enums.AuditActionEnum;
+import com.nsglobal.queue.audit.enums.ModulesNameEnum;
+import com.nsglobal.queue.audit.service.AuditService;
 import com.nsglobal.queue.bankservice.entity.BankService;
 import com.nsglobal.queue.bankservice.repository.BankServiceRepository;
 import com.nsglobal.queue.branch.entity.Branch;
@@ -42,6 +45,8 @@ public class TicketServiceImpl implements TicketService {
 	private final BankServiceRepository bksRepository;
 	private final TicketMapper ticketMapper;
 	
+	private final AuditService audiSrvc;
+	
 	private final QueueNotificationService ws_notification;
 	private final NotificationService notification;
 
@@ -53,12 +58,28 @@ public class TicketServiceImpl implements TicketService {
 		// chargement des relations
 		Branch branch = branchRepository.findById(dto.getBranchId())
 				.orElseThrow(
-						()->new RuntimeException("La succursale n'est pas disponible pour ce ticket")
+						()->{
+							String msg="L'agence n'est pas disponible pour ce ticket";
+							audiSrvc.log(
+									AuditActionEnum.CREATE_TICKET, 
+									ModulesNameEnum.TICKET, 
+									"❌ Erreur de création du ticket. cause: %s ".formatted(msg), 
+									false);
+						return	new RuntimeException(msg);
+						}
 						);
 		
 		BankService service = bksRepository.findById(dto.getServiceId())
 				.orElseThrow(
-						()->new RuntimeException("Le service n'est pas disponible pour ce ticket")
+						()->{
+							String msg="Le service n'est pas disponible pour ce ticket";
+							audiSrvc.log(
+									AuditActionEnum.CREATE_TICKET, 
+									ModulesNameEnum.TICKET, 
+									"❌ Erreur de création du ticket. cause: %s ".formatted(msg), 
+									false);
+							return new RuntimeException(msg);
+						}
 						);
 
 		// recherche de dernier ticket pour avoir le numero suivant
@@ -118,7 +139,11 @@ public class TicketServiceImpl implements TicketService {
 				.comment("Ticket créé.")
 				.build();
 		hisotory.save(rec);
-
+		audiSrvc.log(
+				AuditActionEnum.CREATE_TICKET, 
+				ModulesNameEnum.TICKET, 
+				"✅ Création du ticket N "+ticketNumber, 
+				true);
 		return ticketMapper.toTicketResponsDto(ticketSaved);
 	}
 

@@ -25,6 +25,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "permission")
+
 public class Permission extends BaseEntity {
 	
 	@Column(nullable = false, unique = true, length = 100)

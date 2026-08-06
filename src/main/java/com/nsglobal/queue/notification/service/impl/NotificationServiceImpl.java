@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
 
+import com.nsglobal.queue.audit.enums.AuditActionEnum;
+import com.nsglobal.queue.audit.enums.ModulesNameEnum;
+import com.nsglobal.queue.audit.service.AuditService;
 import com.nsglobal.queue.common.config.AppConfig;
 import com.nsglobal.queue.notification.dto.NotificationEventDto;
 import com.nsglobal.queue.notification.dto.NotificationResponseDto;
@@ -27,21 +30,38 @@ public class NotificationServiceImpl implements NotificationService{
 	
 	private final QueueNotificationService wspusher;
 	
+	private final AuditService audit;
+	 
 	private void sendMessage(String msg,Ticket ticket) {
+		
 		if(ticket.getPhone()==null||
 				ticket.getPhone().isBlank()||
 				ticket.getPhone().isEmpty()) {
+			audit.log(
+		    		AuditActionEnum.SEND_SMS, 
+		    		ModulesNameEnum.NOTIFICATION, 
+		    		"❌ Echec d'envoie du message, le numéro de téléphone est invalide", 
+		    		false);
 			return;
 		}
 		 
 		 smsProvider.send(ticket.getPhone(), msg);
+		 audit.log(
+				 AuditActionEnum.SEND_SMS, 
+		    		ModulesNameEnum.NOTIFICATION, 
+		    		"✅ Succès d'envoie du message au numéro de téléphone %s".formatted(ticket.getPhone()), 
+		    		true);
 	}
 	@Override
 	public NotificationResponseDto sendSms(String phoneNumber, String message) {
 		
 		smsProvider.send(phoneNumber, message);
 		String msg="Messsage envoyé avec succès.";
-		
+		audit.log(
+				 AuditActionEnum.SEND_SMS, 
+		    		ModulesNameEnum.NOTIFICATION, 
+		    		"✅ Succès d'envoie du message au numéro de téléphone %s".formatted(phoneNumber), 
+		    		true);
 		wspusher.sendindSmsWsNotification(
 				NotificationEventDto
 				.builder()
@@ -68,7 +88,11 @@ public class NotificationServiceImpl implements NotificationService{
 		emailProvider.send(email, subject, message);
 		
 		String msg="Messsage envoyé avec succès.";
-		
+		audit.log(
+				 AuditActionEnum.SEND_SMS, 
+		    		ModulesNameEnum.NOTIFICATION, 
+		    		"✅ Succès d'envoie du message. Email: %s".formatted(email), 
+		    		true);
 		wspusher.sendindSmsWsNotification(
 				NotificationEventDto
 				.builder()

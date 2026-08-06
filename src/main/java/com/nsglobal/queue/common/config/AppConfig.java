@@ -10,7 +10,6 @@ import lombok.Setter;
 @Setter
 @Configuration
 @ConfigurationProperties(prefix = "com.nsglobal.queue")
-@SuppressWarnings("unused")
 public class AppConfig {
 	
 	private String enterpriseName;

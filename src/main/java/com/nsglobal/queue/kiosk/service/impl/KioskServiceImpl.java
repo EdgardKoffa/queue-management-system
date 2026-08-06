@@ -93,7 +93,7 @@ public class KioskServiceImpl implements KioskService {
 		
 		   // 1. Vérifier que l'agence existe
 	    BranchResponseDto branch =
-	            branchService.findById(request.getBranchId());
+	            branchService.findById(request.getBranchId()).getData();
 
 	    // 2. Vérifier que le service existe
 	    BankServiceResponseDto service =

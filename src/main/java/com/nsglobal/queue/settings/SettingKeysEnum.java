@@ -8,6 +8,7 @@ import lombok.Setter;
 
 @AllArgsConstructor
 public enum SettingKeysEnum {
+	
 	VOCAL_MESSAGE("Ticket %s veuillez vous presenter au guichet %s"),
 	ENTERPRISE_NAME("NS GLOBAL BANK"),
 	COUNTER_OPEN_CRON("0 0 8 * * MON-FRI"),

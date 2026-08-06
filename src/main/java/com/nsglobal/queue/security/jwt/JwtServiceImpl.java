@@ -47,6 +47,10 @@ public class JwtServiceImpl implements JwtService {
                         user.getBranch() != null
                                 ? user.getBranch().getId()
                                 : null)
+				.claim("permissions",
+						user.getRole().getPermissions()
+						.stream().map(p->p.getName()).toList()
+ )
 				.issuedAt(currentDate)
 				.expiration(expiration)
 				.signWith(getSigningKey())
@@ -93,7 +97,7 @@ public class JwtServiceImpl implements JwtService {
 	            return true;
 
 	        } catch (Exception e) {
-	        	System.out.println(e.getMessage());
+	        	System.out.println("-------->>>>>||||"+e.getMessage());
 	            return false;
 
 	        }

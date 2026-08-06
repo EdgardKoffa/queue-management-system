@@ -18,13 +18,14 @@ public class BranchResponseDto {
 	private Long id;
 	private String code;
 	private String name;
-	private String city;
 	private String phone;
 	private String email;
 	private String address;
+	private String city;
 	private String status;
 	private Long agencyId;
 	private String agencyName;
 	private LocalDateTime createdAt;
+	private LocalDateTime deletedAt;
 
 }

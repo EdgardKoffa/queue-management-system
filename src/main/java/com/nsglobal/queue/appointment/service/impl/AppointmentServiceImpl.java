@@ -19,10 +19,14 @@ import com.nsglobal.queue.appointment.enums.AppointmentStatus;
 import com.nsglobal.queue.appointment.mapper.AppointmentMapper;
 import com.nsglobal.queue.appointment.repository.AppointmentRepository;
 import com.nsglobal.queue.appointment.service.AppointmentService;
+import com.nsglobal.queue.audit.enums.AuditActionEnum;
+import com.nsglobal.queue.audit.enums.ModulesNameEnum;
+import com.nsglobal.queue.audit.service.AuditService;
 import com.nsglobal.queue.bankservice.entity.BankService;
 import com.nsglobal.queue.bankservice.repository.BankServiceRepository;
 import com.nsglobal.queue.branch.entity.Branch;
 import com.nsglobal.queue.branch.repository.BranchRepository;
+import com.nsglobal.queue.common.util.ApiResponseDto;
 import com.nsglobal.queue.dashboard.service.DashboardService;
 import com.nsglobal.queue.notification.service.NotificationService;
 import com.nsglobal.queue.ticket.dto.TicketRequestDto;
@@ -52,18 +56,35 @@ public class AppointmentServiceImpl implements AppointmentService {
 	    private final NotificationService notificationService;
 
 	    private final QueueNotificationService dashboardService;
+	    
+	    private final AuditService auditService;
 
 	@Transactional
 	@Override
 	public AppointmentResponseDto create(AppointmentRequestDto request) {
 		Branch branch = branchRepository.findById(request.getBranchId())
-				.orElseThrow(() ->
-	                    new EntityNotFoundException("Agence introuvable"));
+				.orElseThrow(() ->{
+					String msg="Agence introuvable";
+					auditService.log(
+			 	    		AuditActionEnum.CREATE_APPOINTMENT,
+			 	    		ModulesNameEnum.APPOINTMENT, 
+			 	    		"❌ "+msg,
+			 	    		false);
+				throw	new EntityNotFoundException(msg);
+				}
+	                    );
 
 	    BankService service =
 	            servicePointRepository.findById(request.getServiceId())
-	                    .orElseThrow(() ->
-	                            new EntityNotFoundException("Service introuvable"));
+	                    .orElseThrow(() ->{
+	        				String msg="Service introuvable";
+	        				auditService.log(
+	        		 	    		AuditActionEnum.CREATE_APPOINTMENT,
+	        		 	    		ModulesNameEnum.APPOINTMENT, 
+	        		 	    		"❌ "+msg,
+	        		 	    		false);    
+	                    	throw new EntityNotFoundException(msg);
+	                    });
 	    
 	    /*
 	     * Verification et disponibilite des RDV
@@ -75,9 +96,13 @@ public class AppointmentServiceImpl implements AppointmentService {
 	            request.getAppointmentTime()
 	            );
 	    if(total >= 5){
-
-	        throw new RuntimeException(
-	                "Créneau complet");
+	    	String msg= "Le créneau du RDV avec %s est complet".formatted(request.getCustomerName());
+	    	 auditService.log(
+	 	    		AuditActionEnum.CREATE_APPOINTMENT,
+	 	    		ModulesNameEnum.APPOINTMENT, 
+	 	    		"❌ "+msg,
+	 	    		false);
+	        throw new RuntimeException(msg);
 
 	    }
 	    
@@ -111,6 +136,11 @@ public class AppointmentServiceImpl implements AppointmentService {
 	   // );
 	    //dashboard
 	    dashboardService.publishDashboard();
+	    auditService.log(
+	    		AuditActionEnum.CREATE_APPOINTMENT,
+	    		ModulesNameEnum.APPOINTMENT, 
+	    		"✅ Création du rendez-vous avec %s.".formatted(request.getCustomerName()),
+	    		true);
 	    
 		return appointmentMapper.toResponse(
 		        appointment
@@ -124,7 +154,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 	            .orElseThrow(() ->
 	                    new EntityNotFoundException(
 	                            "Rendez-vous introuvable."));
-
+	 	
 	    return appointmentMapper.toResponse(appointment);
 	}
 
@@ -144,26 +174,54 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 			    Appointment appointment =
 			            appointmentRepository.findById(id)
-			                    .orElseThrow(() ->
-			                            new EntityNotFoundException(
-			                                    "Rendez-vous introuvable."));
+			                    .orElseThrow(() ->{
+			                    	String msg="Rendez-vous introuvable.";
+			                    	auditService.log(
+								    		AuditActionEnum.UPDATE,
+								    		ModulesNameEnum.APPOINTMENT, 
+								    		"❌  "+msg,
+								    		false);
+			                    	throw new EntityNotFoundException(msg);
+			                    }
+			                            );
+			    
 			    if (appointment.getStatus() == AppointmentStatus.CHECKED_IN
 			            || appointment.getStatus() == AppointmentStatus.COMPLETED
 			            || appointment.getStatus() == AppointmentStatus.NO_SHOW) {
-
-			        throw new RuntimeException(
-			                "Impossible de modifier ce rendez-vous.");
+			    	String msg="Impossible de modifier ce rendez-vous.";
+			    	auditService.log(
+				    		AuditActionEnum.UPDATE,
+				    		ModulesNameEnum.APPOINTMENT, 
+				    		"❌  "+msg,
+				    		false);
+			        throw new RuntimeException(msg);
 
 			    }
 			    Branch branch =
 			            branchRepository.findById(request.getBranchId())
-			                    .orElseThrow(() ->
-			                            new EntityNotFoundException(
-			                                    "Agence introuvable."));
+			                    .orElseThrow(() ->{
+			                    	String msg="Agence introuvable.";
+			                    	auditService.log(
+								    		AuditActionEnum.UPDATE,
+								    		ModulesNameEnum.APPOINTMENT, 
+								    		"❌  "+msg,
+								    		false);
+			                    	throw new EntityNotFoundException(msg);
+			                    }
+			                                   
+			                    );
 			    BankService service =
 			            servicePointRepository.findById(request.getServiceId())
-			                    .orElseThrow(() ->
-			                            new EntityNotFoundException("Service introuvable"));
+			                    .orElseThrow(() ->{
+			                    	String msg="Service introuvable";
+			                    	auditService.log(
+								    		AuditActionEnum.UPDATE,
+								    		ModulesNameEnum.APPOINTMENT, 
+								    		"❌  "+msg,
+								    		false);
+			                    	throw new EntityNotFoundException(msg);
+			                    }
+			                            );
 			   
 			    Long total =
 			            appointmentRepository.countAppointments(
@@ -179,8 +237,13 @@ public class AppointmentServiceImpl implements AppointmentService {
 			            );
 
 			    if (total >= 5) {
-			        throw new RuntimeException(
-			                "Créneau complet.");
+			    	String msg= "Le créneau du RDV avec %s est complet".formatted(request.getCustomerName());
+			    	 auditService.log(
+					    		AuditActionEnum.UPDATE,
+					    		ModulesNameEnum.APPOINTMENT, 
+					    		"❌  "+msg,
+					    		false);
+			        throw new RuntimeException(msg);
 			    }
 			    
 			    appointment.setCustomerName(
@@ -206,17 +269,29 @@ public class AppointmentServiceImpl implements AppointmentService {
 		       // .sendAppointmentUpdated(
 		        //appointment);
 			    dashboardService.publishDashboard();
-			    
+			    // "Création 
+			    auditService.log(
+			    		AuditActionEnum.UPDATE,
+			    		ModulesNameEnum.APPOINTMENT, 
+			    		"✅ Modification du rendez-vous avec %s.".formatted(request.getCustomerName()),
+			    		true);
 			    return appointmentMapper.toResponse(
 			            appointment);
 	}
 
 	@Override
-	public void cancel(Long id) {
+	public ApiResponseDto cancel(Long id) {
 		 Appointment appointment = appointmentRepository.findById(id)
-		            .orElseThrow(() ->
-		                    new EntityNotFoundException(
-		                            "Rendez-vous introuvable."));
+		            .orElseThrow(() ->{
+		            	String msg="Rendez-vous introuvable.";
+		            	auditService.log(
+					    		AuditActionEnum.UPDATE,
+					    		ModulesNameEnum.APPOINTMENT, 
+					    		"❌  "+msg,
+					    		false);
+		            	throw new EntityNotFoundException(msg);
+		            
+		            });
 
 		    if (appointment.getStatus() == AppointmentStatus.CHECKED_IN
 		            || appointment.getStatus() == AppointmentStatus.COMPLETED
@@ -236,8 +311,12 @@ public class AppointmentServiceImpl implements AppointmentService {
 		  //  notificationService.sendAppointmentCancelled(appointment);
 
 		    dashboardService.publishDashboard();
-
-		
+		    
+		return ApiResponseDto
+				.builder()
+				.message("Rendez-vous annulé.")
+				.success(true)
+				.build();
 	}
 
 	@Override

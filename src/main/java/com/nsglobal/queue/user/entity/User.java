@@ -59,7 +59,7 @@ public class User extends BaseEntity {
 	private LocalDate lastLogin;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "branch_id")
+	@JoinColumn(name = "branch_id",nullable = true)
 	private Branch branch;
 	
 	@ManyToOne(fetch = FetchType.LAZY)

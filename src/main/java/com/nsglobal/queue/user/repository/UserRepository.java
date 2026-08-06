@@ -16,7 +16,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 			SELECT u
 			FROM User u
 			JOIN FETCH u.role
-			JOIN FETCH u.branch
+			LEFT JOIN FETCH u.branch
 			WHERE u.userName = :userName
 			""")
 	Optional<User> findByUserName( String userName);
@@ -30,6 +30,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@EntityGraph(attributePaths = {"role","branch"})
 	List<User> findAll();
 	
+	@EntityGraph(attributePaths = {"role","branch"})
+	boolean existsByRole_id(Long role_id);
 	//List<OperatorStatisticsDto> getUserStatistics();
 
 }

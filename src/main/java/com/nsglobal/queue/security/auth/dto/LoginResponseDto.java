@@ -1,5 +1,9 @@
 package com.nsglobal.queue.security.auth.dto;
 
+import java.util.List;
+
+import com.nsglobal.queue.common.enums.EnumPermissions;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,5 +27,8 @@ public class LoginResponseDto {
 
 	private String role;
 	
-	 private Long branchId;
+	private Long branchId;
+	
+	private List<EnumPermissions> permissions;
+	
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import com.nsglobal.queue.appointment.dto.AppointmentAvailabilityDto;
 import com.nsglobal.queue.appointment.dto.AppointmentRequestDto;
 import com.nsglobal.queue.appointment.dto.AppointmentResponseDto;
+import com.nsglobal.queue.common.util.ApiResponseDto;
 
 public interface AppointmentService {
 	
@@ -18,7 +19,7 @@ public interface AppointmentService {
 	    AppointmentResponseDto update(Long id,
 	                                  AppointmentRequestDto request);
 
-	    void cancel(Long id);
+	    ApiResponseDto cancel(Long id);
 
 	    AppointmentResponseDto checkIn(String qrCode);
 

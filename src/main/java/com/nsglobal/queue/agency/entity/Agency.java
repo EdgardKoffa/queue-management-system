@@ -35,6 +35,13 @@ public class Agency extends BaseEntity {
 	@Column(unique = true)
 	private String email;
 
+	@Column(nullable = false)
+	private String city;
+
+	@Column(nullable = false)
+	private String address;
+
+
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private EnumStatus status;

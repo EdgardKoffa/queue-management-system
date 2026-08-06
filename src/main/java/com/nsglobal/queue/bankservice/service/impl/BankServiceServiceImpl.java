@@ -2,6 +2,8 @@ package com.nsglobal.queue.bankservice.service.impl;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.nsglobal.queue.bankservice.dto.BankServiceRequestDto;
@@ -71,9 +73,10 @@ public class BankServiceServiceImpl implements BankServiceService {
 	}
 
 	@Override
-	public List<BankServiceResponseDto> findAll() {
-
-		return mapper.toListBranchResponses(bankserviceRepo.findAll());
+	public Page<BankServiceResponseDto> findAll(Pageable page) {
+		
+		return bankserviceRepo.findAll(page)
+				.map(mapper::toBrancResponseDto);
 	}
 
 	@Override

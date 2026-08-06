@@ -27,9 +27,7 @@ public class AuthController {
             @Valid 
             @RequestBody 
             LoginRequestDto dto) {
-    	
-    	System.out.println("====== LOGIN ====== \n"+dto.getUserName()+" "+dto.getPassword());
-       
+    	 
     	LoginResponseDto response = authService.login(dto);
 
         return ResponseEntity.ok(response);

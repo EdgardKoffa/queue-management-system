@@ -29,9 +29,16 @@ public class AgencyRequestDto {
 
 	@Size(max = 20)
 	private String phone;
+	
+	@NotBlank
+	@Size(max = 100)
+	private String city;
 
 	@Email
 	private String email;
+	
+	@NotBlank
+	private String address;
 
 	@NotNull
 	private EnumStatus status;

@@ -1,5 +1,7 @@
 package com.nsglobal.queue.dashboard.dto;
 
+import com.nsglobal.queue.common.enums.CounterStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,7 +38,7 @@ public class CounterStatisticsDto {
     /**
      * Statut du guichet.
      */
-    private String status;
+    private CounterStatus status;
 
     /**
      * Nombre de tickets traités aujourd'hui.

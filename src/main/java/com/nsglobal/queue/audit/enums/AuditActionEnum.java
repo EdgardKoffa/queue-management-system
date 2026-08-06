@@ -1,0 +1,61 @@
+package com.nsglobal.queue.audit.enums;
+
+
+public enum AuditActionEnum {
+
+	    LOGIN,
+	    LOGOUT,
+
+	    CREATE_USER,
+	    UPDATE_USER,
+	    DELETE_USER,
+	    ENABLE_USER,
+	    DISABLE_USER,
+	    LOCK_USER,
+	    UNLOCK_USER,
+	    CHANGE_PASSWORD,
+	    ASSIGN_ROLE,
+	    CHANGE_BRANCH,
+
+	    CREATE_ROLE,
+	    UPDATE_ROLE,
+	    DELETE_ROLE,
+	    ASSIGN_PERMISSION,
+	    REMOVE_PERMISSION,
+	    
+
+	    CREATE_BRANCH,
+	    UPDATE_BRANCH,
+	    DELETE_BRANCH,
+
+	    CREATE_COUNTER,
+	    OPEN_COUNTER,
+	    CLOSE_COUNTER,
+	    ASSIGN_OPERATOR,
+	    RELEASE_COUNTER,
+
+	    CREATE_SERVICE,
+	    UPDATE_SERVICE,
+	    DELETE_SERVICE,
+
+	    CREATE_TICKET,
+	    CALL_TICKET,
+	    TRANSFER_TICKET,
+	    FINISH_TICKET,
+	    CANCEL_TICKET,
+
+	    CREATE_APPOINTMENT,
+	    CHECK_IN,
+
+	    SEND_SMS,
+	    SEND_EMAIL,
+
+	    VIEW_DASHBOARD,
+	    
+	    CREATE,
+	    UPDATE,
+	    DELETE,
+	    VIEW_DETAIL,
+	    CHANGE_STATUS
+
+}

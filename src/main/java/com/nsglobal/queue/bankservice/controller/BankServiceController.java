@@ -2,6 +2,10 @@ package com.nsglobal.queue.bankservice.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,7 +21,10 @@ import com.nsglobal.queue.bankservice.dto.BankServiceRequestDto;
 import com.nsglobal.queue.bankservice.dto.BankServiceResponseDto;
 import com.nsglobal.queue.bankservice.service.BankServiceService;
 import com.nsglobal.queue.common.constant.ApiRoutes;
+import com.nsglobal.queue.common.constant.HasPermissions;
 import com.nsglobal.queue.common.constant.HasRoleNames;
+import com.nsglobal.queue.common.response.ApiPageResponse;
+import com.nsglobal.queue.common.response.ResponseBuilder;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,10 +37,16 @@ public class BankServiceController {
 
 	private final BankServiceService bankerviceervice;
 	
-	@PreAuthorize(HasRoleNames.HAS_SUPER_ADMIN)
+	@PreAuthorize(HasPermissions.HAS_MANAGE_BRANCHS)
 	@GetMapping
-	public List<BankServiceResponseDto> findAll() {
-		return bankerviceervice.findAll();
+	public ResponseEntity<ApiPageResponse<BankServiceResponseDto>> findAll(
+			@PageableDefault(page = 0, size = 10) Pageable pageable) {
+        
+        // 1. Appeler le service pour récupérer la page Spring Data
+        Page<BankServiceResponseDto> userPage = bankerviceervice.findAll(pageable);
+        
+		return ResponseEntity.ok(
+				ResponseBuilder.page("Liste des services...",userPage));
 	}
 	
 	@PreAuthorize(HasRoleNames.HAS_SUPER_ADMIN)

@@ -7,6 +7,7 @@ import com.nsglobal.queue.counter.dto.CounterResponseDto;
 import com.nsglobal.queue.counter.entity.Counter;
 import com.nsglobal.queue.counter.repository.CounterRepository;
 import com.nsglobal.queue.dashboard.dto.DashboardDto;
+import com.nsglobal.queue.dashboard.dto.DashboardResponseDto;
 import com.nsglobal.queue.dashboard.service.DashboardService;
 import com.nsglobal.queue.display.service.DisplayService;
 import com.nsglobal.queue.notification.dto.NotificationEventDto;
@@ -101,7 +102,7 @@ public class QueueNotificationServiceImpl implements QueueNotificationService {
 	@Override
 	public void publishDashboard() {
 		
-		 DashboardDto dashboard =
+		 DashboardResponseDto dashboard =
 	                dashboardService.getDashboard();
 
 		messagingTemplate.convertAndSend(

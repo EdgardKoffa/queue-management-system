@@ -1,7 +1,9 @@
 package com.nsglobal.queue.branch.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,7 +19,10 @@ import com.nsglobal.queue.branch.dto.BranchRequestDto;
 import com.nsglobal.queue.branch.dto.BranchResponseDto;
 import com.nsglobal.queue.branch.service.BranchService;
 import com.nsglobal.queue.common.constant.ApiRoutes;
-import com.nsglobal.queue.common.constant.HasRoleNames;
+import com.nsglobal.queue.common.constant.HasPermissions;
+import com.nsglobal.queue.common.response.ApiPageResponse;
+import com.nsglobal.queue.common.response.ApiResponse;
+import com.nsglobal.queue.common.response.ResponseBuilder;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,33 +35,51 @@ public class BranchController {
 
 	private final BranchService branchService;
 	
-	@PreAuthorize(HasRoleNames.HAS_SUPER_ADMIN)
+	@PreAuthorize(HasPermissions.HAS_MANAGE_BRANCHS)
 	@GetMapping
-	public List<BranchResponseDto> findAll() {
-		return branchService.findAll();
+	public ResponseEntity<ApiPageResponse<BranchResponseDto>> findAll(
+			@PageableDefault(page = 0, size = 10) 
+			Pageable pageable) {
+		Page<BranchResponseDto> list=branchService.findAll(pageable);
+		
+		ResponseEntity<ApiPageResponse<BranchResponseDto>> response=ResponseEntity.ok(
+				ResponseBuilder
+				.page("Liste des agences recupérées...",list));
+		
+		//System.out.println("ApiPageResponse<T> success"+list+"\n"+response);
+		return response;
 	}
 	
-	@PreAuthorize(HasRoleNames.HAS_SUPER_ADMIN)
+	@PreAuthorize(HasPermissions.HAS_MANAGE_BRANCHS)
 	@GetMapping("/{id}")
-	public BranchResponseDto findById(@Valid @PathVariable Long id) {
-		return branchService.findById(id);
+	public ResponseEntity<ApiResponse<BranchResponseDto>> findById(
+			@Valid @PathVariable Long id) {
+		return  ResponseEntity.ok(
+				branchService.findById(id)
+				);
 	}
 	
-	@PreAuthorize(HasRoleNames.HAS_SUPER_ADMIN)
+	@PreAuthorize(HasPermissions.HAS_MANAGE_BRANCHS)
 	@PostMapping
-	public BranchResponseDto create(@Valid @RequestBody BranchRequestDto branch) {
-		return branchService.create(branch);
+	public ResponseEntity<ApiResponse<BranchResponseDto>> create(@Valid @RequestBody BranchRequestDto branch) {
+		return ResponseEntity.ok(
+				branchService.create(branch)
+				);
 	}
 	
-	@PreAuthorize(HasRoleNames.HAS_SUPER_ADMIN)
+	@PreAuthorize(HasPermissions.HAS_MANAGE_BRANCHS)
 	@PutMapping("/{id}")
-	public BranchResponseDto update(@Valid @PathVariable Long id, @Valid @RequestBody BranchRequestDto branch) {
-		return branchService.update(id, branch);
+	public ResponseEntity<ApiResponse<BranchResponseDto>> update(
+			@Valid @PathVariable Long id, 
+			@Valid @RequestBody BranchRequestDto branch) {
+		return ResponseEntity.ok(branchService.update(id, branch));
 	}
 	
-	@PreAuthorize(HasRoleNames.HAS_SUPER_ADMIN)
+	@PreAuthorize(HasPermissions.HAS_MANAGE_BRANCHS)
 	@DeleteMapping("/{id}")
-	void delete(@Valid @PathVariable Long id) {
-		branchService.delete(id);
+	public ResponseEntity<ApiResponse<BranchResponseDto>> delete(@Valid @PathVariable Long id) {
+		
+		
+		return  ResponseEntity.ok(branchService.delete(id));
 	}
 }

@@ -5,10 +5,14 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nsglobal.queue.dashboard.dto.ActivityDto;
 import com.nsglobal.queue.dashboard.dto.BranchStatisticsDto;
 import com.nsglobal.queue.dashboard.dto.CounterStatisticsDto;
 import com.nsglobal.queue.dashboard.dto.DashboardDto;
+import com.nsglobal.queue.dashboard.dto.DashboardResponseDto;
+import com.nsglobal.queue.dashboard.dto.HourlyStatisticsDto;
 import com.nsglobal.queue.dashboard.dto.OperatorStatisticsDto;
+import com.nsglobal.queue.dashboard.dto.RecentTicketDto;
 import com.nsglobal.queue.dashboard.dto.ServiceStatisticsDto;
 import com.nsglobal.queue.dashboard.repository.DashboardRepository;
 import com.nsglobal.queue.dashboard.service.DashboardService;
@@ -24,7 +28,7 @@ public class DashboardServiceImpl implements DashboardService {
 	private final DashboardRepository dashboardRepository;
 
 	@Override
-	public DashboardDto getDashboard() {
+	public DashboardDto getDashboardSummarry() {
 
 	        DashboardDto dto = new DashboardDto();
 
@@ -57,6 +61,25 @@ public class DashboardServiceImpl implements DashboardService {
 	}
 
 	@Override
+	public DashboardResponseDto getDashboard() {
+		
+		DashboardResponseDto dto =  DashboardResponseDto
+				.builder()
+				.hourlyStatistics(getHourlyStatistics())
+				.counterStatistcs(getCounterStatistics())
+				.operatorStatistics(getOperatorStatistics())
+				.summary(getDashboardSummarry())
+				.serviceStatistics(getServiceStatistics())
+				.recentTickets(getRecentTickets())
+				.recentActivities(getActivities())
+				.build();
+
+	        
+	        return dto;
+
+	}
+
+	@Override
 	public List<BranchStatisticsDto> getBranchStatistics() {
 		// TODO Auto-generated method stub
 		return null;
@@ -76,6 +99,39 @@ public class DashboardServiceImpl implements DashboardService {
 
 	@Override
 	public List<CounterStatisticsDto> getCounterStatistics() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public DashboardDto summaryTest() {
+		
+		return DashboardDto.builder()
+				.waitingTickets(12L)
+				.activeCounters(15L)
+				.averageServiceTime(7.0)
+				.averageWaitingTime(8.5)
+				.busyCounters(9L)
+				.calledTickets(123L)
+				.closedCounters(4L)
+				.completedTickets(120L)
+				.build();
+	}
+
+	@Override
+	public List<RecentTicketDto> getRecentTickets() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ActivityDto> getActivities() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<HourlyStatisticsDto> getHourlyStatistics() {
 		// TODO Auto-generated method stub
 		return null;
 	}
