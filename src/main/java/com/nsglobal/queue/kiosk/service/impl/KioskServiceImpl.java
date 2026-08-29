@@ -89,7 +89,7 @@ public class KioskServiceImpl implements KioskService {
 	}
 	
 	@Override
-	public TicketGenerationResponseDto generateTicket(TicketGenerationRequestDto request) {
+	public  TicketGenerationResponseDto generateTicket(TicketGenerationRequestDto request) {
 		
 		   // 1. Vérifier que l'agence existe
 	    BranchResponseDto branch =
@@ -97,7 +97,7 @@ public class KioskServiceImpl implements KioskService {
 
 	    // 2. Vérifier que le service existe
 	    BankServiceResponseDto service =
-	             bankServiceService.findById(request.getServiceId());
+	             bankServiceService.findById(request.getServiceId()).getData();
 
 	     // 3. Préparer la demande destinée au TicketService
 	     TicketRequestDto ticketRequest =

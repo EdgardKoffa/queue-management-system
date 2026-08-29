@@ -35,7 +35,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
-		System.out.println("\n loadUserByUsername %s linge 1".formatted(username));
+		//System.out.println("\n loadUserByUsername %s linge 1".formatted(username));
 		
 		//recuperation du user depuis la base par le nom d'utilisateur depuis le logingForm
 		String userName=username;
@@ -48,7 +48,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 						}
 						);
 		
-		System.out.println("\n loadUserByUsername %s linge 2".formatted(username));
+		//System.out.println("\n loadUserByUsername %s linge 2".formatted(username));
 		//retourne les info de user de la base charger dans user de spring security
 		
 
@@ -59,8 +59,8 @@ List<SimpleGrantedAuthority> authorities_list=usr.getRole()
 		perm.getName().name())
 		).toList();
 
-System.out.println(usr.getRole()
-		.getPermissions()+" <<<< authorities_list ---> "+authorities_list);
+//System.out.println(usr.getRole()
+//		.getPermissions()+" <<<< authorities_list ---> "+authorities_list);
 		
 		return org.springframework.security.core.userdetails
 				.User

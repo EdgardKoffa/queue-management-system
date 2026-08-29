@@ -14,8 +14,12 @@ import com.nsglobal.queue.common.response.ApiErrorResponse;
 import com.nsglobal.queue.security.auth.exception.InvalidCredentialsException;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler extends RuntimeException {
 	
+	
+
+	 private static final long serialVersionUID = 1L;
+
 	 @ExceptionHandler(InvalidCredentialsException.class)
 	    public ResponseEntity<ApiErrorResponse> handleInvalidCredentials(
 	            InvalidCredentialsException ex) {
@@ -41,6 +45,8 @@ System.out.println("ResponseEntity %s".formatted(ex.getMessage()));
 	                .body(erros);
 
 	    }
+
+	 
 	 @ExceptionHandler(DataIntegrityViolationException.class)
 	    public ResponseEntity<ApiErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
 	     

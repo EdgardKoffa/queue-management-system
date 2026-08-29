@@ -16,7 +16,7 @@ public final class Utilities {
 		Locale localCtx=LocaleContextHolder.getLocale();
 		String lang=localCtx.getDisplayLanguage();
 		String lang_code=localCtx.getLanguage();
-		System.out.println("\n lang => %s \n lang_code => %s".formatted(lang,lang_code));
+		//System.out.println("\n lang => %s \n lang_code => %s".formatted(lang,lang_code));
 		return lang_code.toLowerCase()=="fr";
 		}
 

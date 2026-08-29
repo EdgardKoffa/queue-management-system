@@ -25,6 +25,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class BankService extends BaseEntity {
+	
 	@Column(nullable = false, unique = true)
 	private String code;
 
@@ -50,4 +51,7 @@ public class BankService extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "branch_id", nullable = false)
 	private Branch branch;
+	
+	@Column()
+	private String description;
 }

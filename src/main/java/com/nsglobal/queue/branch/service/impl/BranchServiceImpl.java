@@ -142,7 +142,7 @@ public class BranchServiceImpl implements BranchService {
 		
 		return rsp;
 	}
-
+	@Transactional
 	@Override
 	public ApiResponse<BranchResponseDto>  findById(Long id) {
 		ApiResponseBuilder <BranchResponseDto> apiResponse=ApiResponse.<BranchResponseDto>builder();
@@ -167,14 +167,15 @@ public class BranchServiceImpl implements BranchService {
 		return rsp;
 	}
 
-	
+	@Transactional
 	@Override
 	public Page<BranchResponseDto> findAll(Pageable page) {
 
 		return brancRepo.findAll(page)
 				.map(mapper::toBrancResponseDto);
 	}
-
+	
+	@Transactional
 	@Override
 	public ApiResponse<BranchResponseDto> delete(Long id) {
 		Branch b=getById(id);
@@ -192,6 +193,7 @@ public class BranchServiceImpl implements BranchService {
 		return ResponseBuilder.success(msg, mapper.toBrancResponseDto(deleted));
 	}
 	
+	@Transactional
 	@Override
 	public ApiResponse<BranchResponseDto> changeStatus(EnumStatus status, Long id) {
 		ApiResponseBuilder <BranchResponseDto> apiResponse=ApiResponse.<BranchResponseDto>builder();
@@ -218,6 +220,7 @@ public class BranchServiceImpl implements BranchService {
 		return respone;
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public ApiResponse<List<BranchResponseDto>> findAll() {
 		ApiResponseBuilder <List<BranchResponseDto>> apiResponse=ApiResponse.<List<BranchResponseDto>>builder();
@@ -226,7 +229,7 @@ public class BranchServiceImpl implements BranchService {
 						.filter(p->p.getDeletedAt()==null)
 						.map(mapper::toBrancResponseDto).toList()
 						)
-				.message(ApiMessages.UPDATED)
+				.message(ApiMessages.SUCCESS)
 				.success(true)
 				.build();
 		return rsp;

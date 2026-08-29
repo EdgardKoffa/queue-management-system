@@ -57,8 +57,8 @@ public class UtilsServiceImpl implements UtilsService {
 	public RemoteHttpDto getRemoteHostInfo() {
 		
 		//HttpSession session=http.getSession();
-		System.out.print("http.getHeader(user-agent) ==>");
-		System.out.println(http.getHeader("user-agent"));
+		//System.out.print("http.getHeader(user-agent) ==>");
+		//System.out.println(http.getHeader("user-agent"));
 		return RemoteHttpDto
 				.builder()
 				.ipAddress(http.getRemoteAddr())

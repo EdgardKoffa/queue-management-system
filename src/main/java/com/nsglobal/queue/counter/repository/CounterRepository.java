@@ -30,4 +30,8 @@ public interface CounterRepository extends JpaRepository<Counter, Long> {
 	Long countOpenByBranch(Long branchId);
 	
 	List<Counter> findAllByActive(boolean active);
+	
+	Counter findByName(String name);
+	
+	Counter findByNumber(int number);
 }

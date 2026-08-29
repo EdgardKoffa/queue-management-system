@@ -9,12 +9,19 @@ public final class HasPermissions {
 	public static final String HAS_COUNTER_CLOSE="hasAuthority('COUNTER_CLOSE')";
 	public static final String HAS_COUNTER_ASSIGN="hasAuthority('COUNTER_ASSIGN')";
 	public static final String HAS_COUNTER_RELEASE="hasAuthority('COUNTER_RELEASE')";
+	public static final String HAS_COUNTER_CREATE="hasAuthority('COUNTER_CREATE')";
+	public static final String HAS_COUNTER_UPDATE="hasAuthority('COUNTER_UPDATE')";
+	public static final String HAS_COUNTER_DELETE="hasAuthority('COUNTER_DELETE')";
+	public static final String HAS_COUNTER_VIEW="hasAuthority('COUNTER_VIEW')";
 	
 	public static final String HAS_TICKET_CREATE="hasAuthority('TICKET_CREATE')";
+	public static final String HAS_TICKET_SEQUENCE_CREATE="hasAuthority('TICKET_SEQUENCE_CREATE')";
 	public static final String HAS_TICKET_CALL="hasAuthority('TICKET_CALL')";
 	public static final String HAS_TICKET_TRANSFER="hasAuthority('TICKET_TRANSFER')";
 	public static final String HAS_TICKET_FINISH="hasAuthority('TICKET_FINISH')";
 	public static final String HAS_TICKET_CANCEL="hasAuthority('TICKET_CANCEL')";
+	
+	public static final String HAS_KIOSK="hasAuthority('KIOSK')";
 	
 	public static final String HAS_VIEW_DASHBOARD="hasAuthority('VIEW_DASHBOARD')";
 	public static final String HAS_MANAGE_APPOINTMENTS="hasAuthority('MANAGE_APPOINTMENTS')";

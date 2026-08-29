@@ -29,7 +29,7 @@ public final class ResponseBuilder {
 
 	}
 	
-	public static ApiResponse<Void> success(
+	/*public static ApiResponse<Void> success(
 	        String message) {
 
 	    return ApiResponse.<Void>builder()
@@ -37,7 +37,7 @@ public final class ResponseBuilder {
 	            .message(message)
 	            .build();
 
-	}
+	}*/
 
 	
 	public static <T> ApiPageResponse<T> page(

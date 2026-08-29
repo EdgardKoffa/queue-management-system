@@ -46,7 +46,7 @@ public class DataInitialiser implements CommandLineRunner{
 		SecretKey key = Jwts.SIG.HS256.key().build();
 
 		String secret = Encoders.BASE64.encode(key.getEncoded());
-		System.out.println("-----------Initializing.....-----------\n");
+	//	System.out.println("-----------Initializing.....-----------\n");
 		//System.out.println(secret);
 	//System.out.println("\n-----------Initializing.....-----------");
 				initializeRoles();
@@ -71,7 +71,7 @@ public class DataInitialiser implements CommandLineRunner{
             roleRepository.save(role);
 
         }else {
-        	System.out.println("Role %s existe deja.".formatted(roleName));
+        	//System.out.println("Role %s existe deja.".formatted(roleName));
         }
 
     }
@@ -87,7 +87,7 @@ public class DataInitialiser implements CommandLineRunner{
             roleRepository.save(role);
 
         }else {
-        	System.out.println("Role %s existe deja.".formatted(roleName));
+        	//System.out.println("Role %s existe deja.".formatted(roleName));
         }
 
     }
@@ -103,7 +103,7 @@ public class DataInitialiser implements CommandLineRunner{
       return permRepo.save(perm.build());
             
         }else {
-        	System.out.println("Role %s existe deja.".formatted(permissionName));
+        	//System.out.println("Role %s existe deja.".formatted(permissionName));
         return perm.build();
         }
 

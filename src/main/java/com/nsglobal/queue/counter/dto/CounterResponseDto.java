@@ -35,6 +35,8 @@ public class CounterResponseDto {
 
 	private LocalDateTime createdAt;
 	
+	private LocalDateTime deletedAt;
+	
 	private Long operatorId;
 	
 	private String operatorUserName;

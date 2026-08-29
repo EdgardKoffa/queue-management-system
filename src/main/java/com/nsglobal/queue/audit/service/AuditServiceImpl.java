@@ -39,7 +39,7 @@ public class AuditServiceImpl implements AuditService {
 				.getConnectedUserName();
 		
 		RemoteHttpDto remote=userService.getRemoteHostInfo();
-		System.out.println("");
+		//System.out.println("remote ==> "+remote);
 		
 		auditRepository.save(
 				AuditLog

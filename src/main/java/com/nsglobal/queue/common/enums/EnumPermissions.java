@@ -11,13 +11,22 @@ public enum EnumPermissions {
 	COUNTER_CLOSE("Autorisation pour fermer un guichet"),
 	COUNTER_ASSIGN("Autorisation pour assigner un operateur a un guichet"),
 	COUNTER_RELEASE("Autorisation pour liberer un guichet de son operateur"),
+	
+	COUNTER_CREATE("Autorisation pour créer un guichet"),
+	COUNTER_UPDATE("Autorisation pour modifier un guichet"),
+	COUNTER_DELETE("Autorisation pour supprimer un guichet"),
+	COUNTER_VIEW("Autorisation pour voir un guichet"),
+	KIOSK("Autorisation au kiosque d'imprimer un ticket"),
+	
 	TICKET_CREATE("Autorisation pour creer un ticket"),
 	TICKET_CALL("Autorisation pour appeler un ticket"),
 	TICKET_TRANSFER("Autorisation pour transferer un ticket vers un autre guichet"),
 	TICKET_FINISH("Autorisation pour completer un ticket"),
 	TICKET_CANCEL("Autorisation pour annuler un ticket"),
 	VIEW_DASHBOARD("Autorisation pour avoir acces au tableu de bord"),
+	
 	//MANAGE_APPOINTMENTS("Autorisation pour  un guichet"),
+	
 	MANAGE_BRANCHS("Autorisation pour gerer une agence"),
 	MANAGE_SERVICE("Autorisation pour gerer un service"),
 	MANAGE_AGENCY("Autorisation pour gerer l'agence principale"),
@@ -27,7 +36,7 @@ public enum EnumPermissions {
 	MANAGE_USERS("Autorisation pour gestion des utilisateurs"),
 	MANAGE_ROLES("Autorisation pour gestion  des roles et permission"),
 	SEND_NOTIFICATION("Envoyer un message"),
-	VIEW_DISPLAY("Affichager sur ecran: LED, KISOK...");
+	VIEW_DISPLAY("Affichager sur ecran: LED,...");
 	
 	@Setter
 	@Getter

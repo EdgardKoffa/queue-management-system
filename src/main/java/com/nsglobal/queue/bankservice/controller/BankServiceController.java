@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -22,8 +23,8 @@ import com.nsglobal.queue.bankservice.dto.BankServiceResponseDto;
 import com.nsglobal.queue.bankservice.service.BankServiceService;
 import com.nsglobal.queue.common.constant.ApiRoutes;
 import com.nsglobal.queue.common.constant.HasPermissions;
-import com.nsglobal.queue.common.constant.HasRoleNames;
 import com.nsglobal.queue.common.response.ApiPageResponse;
+import com.nsglobal.queue.common.response.ApiResponse;
 import com.nsglobal.queue.common.response.ResponseBuilder;
 
 import jakarta.validation.Valid;
@@ -49,29 +50,43 @@ public class BankServiceController {
 				ResponseBuilder.page("Liste des services...",userPage));
 	}
 	
-	@PreAuthorize(HasRoleNames.HAS_SUPER_ADMIN)
+	@PreAuthorize(HasPermissions.HAS_VIEW_DETAIL)
 	@GetMapping("/{id}")
-	public BankServiceResponseDto findById(@Valid @PathVariable Long id) {
-		return bankerviceervice.findById(id);
+	public ResponseEntity<ApiResponse<BankServiceResponseDto>> findById(@Valid @PathVariable Long id) {
+		return ResponseEntity.ok(bankerviceervice.findById(id));
 	}
 	
-	@PreAuthorize(HasRoleNames.HAS_SUPER_ADMIN)
+	@PreAuthorize(HasPermissions.HAS_VIEW_LIST)
+	@GetMapping("/all")
+	public ResponseEntity<ApiResponse<List<BankServiceResponseDto>>> findAll() {
+		return ResponseEntity.ok(bankerviceervice.findAll());
+	}
+	
+	@PreAuthorize(HasPermissions.HAS_MANAGE_SERVICE)
 	@PostMapping
-	public BankServiceResponseDto create(@Valid @RequestBody BankServiceRequestDto bankService) {
-		return bankerviceervice.create(bankService);
+	public ResponseEntity<ApiResponse<BankServiceResponseDto>> create(@Valid @RequestBody BankServiceRequestDto bankService) {
+		return ResponseEntity.ok(bankerviceervice.create(bankService));
 	}
 	
-	@PreAuthorize(HasRoleNames.HAS_SUPER_ADMIN)
+	@PreAuthorize(HasPermissions.HAS_MANAGE_SERVICE)
 	@PutMapping("/{id}")
-	public BankServiceResponseDto update(@Valid @PathVariable Long id,
+	public ResponseEntity<ApiResponse<BankServiceResponseDto>> update(@Valid @PathVariable Long id,
 			@Valid @RequestBody BankServiceRequestDto bankService) {
-		return bankerviceervice.update(id, bankService);
+		return ResponseEntity.ok(bankerviceervice.update(id, bankService));
 	}
 	
-	@PreAuthorize(HasRoleNames.HAS_SUPER_ADMIN)
+	@PreAuthorize(HasPermissions.HAS_MANAGE_SERVICE)
 	@DeleteMapping("/{id}")
-	void delete(@Valid @PathVariable Long id) {
-		bankerviceervice.delete(id);
+	public ResponseEntity<ApiResponse<BankServiceResponseDto>> delete(@Valid @PathVariable Long id) {
+	return	ResponseEntity.ok(bankerviceervice.delete(id));
+	}
+	
+	@PreAuthorize(HasPermissions.HAS_MANAGE_SERVICE)
+	@PatchMapping("/{id}/isactive/{isactive}")
+	public ResponseEntity<ApiResponse<BankServiceResponseDto>> chageState(
+			@Valid @PathVariable Long id,
+			@Valid @PathVariable boolean isactive) {
+	return	ResponseEntity.ok(bankerviceervice.changeActivateState(id,isactive));
 	}
 
 }

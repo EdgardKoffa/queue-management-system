@@ -32,6 +32,10 @@ public class BankServiceResponseDto {
 	private Long branchId;
 
 	private String branchName;
-
+	
+	private String description;
+	
 	private LocalDateTime createdAt;
+	
+	private LocalDateTime deletedAt;
 }

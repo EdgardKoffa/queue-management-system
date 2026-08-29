@@ -1,5 +1,7 @@
 package com.nsglobal.queue.branch.controller;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -49,7 +51,16 @@ public class BranchController {
 		//System.out.println("ApiPageResponse<T> success"+list+"\n"+response);
 		return response;
 	}
-	
+	@PreAuthorize(HasPermissions.HAS_MANAGE_BRANCHS)
+	@GetMapping("/all")
+	public ResponseEntity<ApiResponse<List<BranchResponseDto>>> findAll() {
+		ApiResponse<List<BranchResponseDto>> list=branchService.findAll();
+		
+		ResponseEntity<ApiResponse<List<BranchResponseDto>>> response=ResponseEntity.ok(list);
+		
+		//System.out.println("ApiPageResponse<T> success"+list+"\n"+response);
+		return response;
+	}
 	@PreAuthorize(HasPermissions.HAS_MANAGE_BRANCHS)
 	@GetMapping("/{id}")
 	public ResponseEntity<ApiResponse<BranchResponseDto>> findById(

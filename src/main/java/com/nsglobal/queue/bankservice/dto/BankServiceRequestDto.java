@@ -27,13 +27,15 @@ public class BankServiceRequestDto {
 	@NotBlank
 	private String prefix;
 
-	@NotBlank
+	@NotNull
 	private Integer priority;
 
-	@NotBlank
+	@NotNull
 	private Integer estimatedDurationMinutes;
 	@NotNull
 	private Boolean active;
-	@NotBlank
+	@NotNull
 	private Long branchId;
+	
+	private String description;
 }
