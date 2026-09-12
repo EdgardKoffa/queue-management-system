@@ -1,5 +1,7 @@
 package com.nsglobal.queue.user.dto;
 
+import java.time.LocalDate;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,4 +36,7 @@ public class UserResponseDto {
 	private String branch;
 	
 	private String role;
+	private LocalDate lastLogin;
+	private LocalDate deletedAt;
+	
 }

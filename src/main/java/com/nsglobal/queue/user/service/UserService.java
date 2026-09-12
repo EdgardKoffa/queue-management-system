@@ -3,32 +3,38 @@ package com.nsglobal.queue.user.service;
 
 import java.util.List;
 
-import com.nsglobal.queue.user.dto.UserPatchResponseDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import com.nsglobal.queue.common.response.ApiPageResponse;
+import com.nsglobal.queue.common.response.ApiResponse;
 import com.nsglobal.queue.user.dto.UserRequestDto;
 import com.nsglobal.queue.user.dto.UserResponseDto;
 
 public interface UserService {
 	
- public UserResponseDto create(UserRequestDto dto);
+ public ApiResponse<UserResponseDto> create(UserRequestDto dto);
  
- public UserResponseDto update(UserRequestDto dto,Long id);
+ public ApiResponse<UserResponseDto> update(UserRequestDto dto,Long id);
  
- public UserResponseDto findById(Long id);
+ public ApiResponse<UserResponseDto> findById(Long id);
  
- public UserResponseDto findByUserName( String userName);
+ public ApiResponse<UserResponseDto> findByUserName( String userName);
  
- public UserPatchResponseDto enableDesableUser(Long userId,boolean isEnabled);
+ public ApiResponse<UserResponseDto> enableDesableUser(Long userId,boolean isEnabled);
  
- public UserPatchResponseDto lockUnlockUserUser(Long userId,boolean isLocked);
+ public ApiResponse<UserResponseDto> lockUnlockUserUser(Long userId,boolean isLocked);
  
- public UserPatchResponseDto assignRole(Long userId,Long roleId);
+ public ApiResponse<UserResponseDto> assignRole(Long userId,Long roleId);
  
- public UserPatchResponseDto changeUserBranch(Long userId,Long branchId);
+ public ApiResponse<UserResponseDto> changeUserBranch(Long userId,Long branchId);
  
- public List<UserResponseDto> findAll();
+ public ApiResponse<List<UserResponseDto>> findAll();
+ 
+ public ApiPageResponse<UserResponseDto> findAll(Pageable pageable);
  
 // public List<UserResponseDto> findAllWithNotDeletedAt();
  
- public UserPatchResponseDto removeUser(Long id);
+ public ApiResponse<UserResponseDto> removeUser(Long id);
  
 }

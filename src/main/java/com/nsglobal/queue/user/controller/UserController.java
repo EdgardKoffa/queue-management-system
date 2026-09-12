@@ -2,6 +2,9 @@ package com.nsglobal.queue.user.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -16,9 +19,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nsglobal.queue.bankservice.dto.BankServiceResponseDto;
 import com.nsglobal.queue.common.constant.ApiRoutes;
 import com.nsglobal.queue.common.constant.HasPermissions;
 import com.nsglobal.queue.common.constant.HasRoleNames;
+import com.nsglobal.queue.common.response.ApiPageResponse;
+import com.nsglobal.queue.common.response.ApiResponse;
+import com.nsglobal.queue.common.response.ResponseBuilder;
 import com.nsglobal.queue.user.dto.UserPatchResponseDto;
 import com.nsglobal.queue.user.dto.UserRequestDto;
 import com.nsglobal.queue.user.dto.UserResponseDto;
@@ -37,7 +44,7 @@ public class UserController {
 		
 		@PreAuthorize(HasPermissions.HAS_MANAGE_USERS)
 		@PostMapping
-		public ResponseEntity<UserResponseDto> createAccount(
+		public ResponseEntity<ApiResponse<UserResponseDto>> createAccount(
 				@Valid
 				@RequestBody
 				UserRequestDto dto
@@ -47,7 +54,7 @@ public class UserController {
 		
 		@PreAuthorize(HasPermissions.HAS_MANAGE_USERS)
 		@PutMapping("/{id}")
-		public ResponseEntity<UserResponseDto> updateAccount(
+		public ResponseEntity<ApiResponse<UserResponseDto>> updateAccount(
 				@Valid 
 				@PathVariable
 				Long id,
@@ -60,7 +67,7 @@ public class UserController {
 		
 		@PreAuthorize(HasPermissions.HAS_MANAGE_USERS)
 		@DeleteMapping("/{id}")
-		public ResponseEntity<UserPatchResponseDto> removeAccount(
+		public ResponseEntity<ApiResponse<UserResponseDto>> removeAccount(
 				@Valid 
 				@PathVariable
 				Long id) {
@@ -69,14 +76,25 @@ public class UserController {
 		}
 		
 		@PreAuthorize(HasPermissions.HAS_MANAGE_USERS)
-		@GetMapping
-		public ResponseEntity<List<UserResponseDto>> findAll() {
+		@GetMapping("/all")
+		public ResponseEntity<ApiResponse<List<UserResponseDto>>> findAll() {
 			return ResponseEntity.ok(userService.findAll());
+		}
+		
+		@PreAuthorize(HasPermissions.HAS_MANAGE_USERS)
+		@GetMapping
+		public ResponseEntity<ApiPageResponse<UserResponseDto>> findAll(
+				@PageableDefault(page = 0, size = 10) Pageable pageable) {
+	        
+	        // 1. Appeler le service pour récupérer la page Spring Data
+			ApiPageResponse<UserResponseDto> userPage = userService.findAll(pageable);
+	        
+			return ResponseEntity.ok(userPage);
 		}
 		
 		@PreAuthorize(HasPermissions.HAS_VIEW_DETAIL)
 		@GetMapping("/{id}")
-		public ResponseEntity<UserResponseDto> findById(
+		public ResponseEntity<ApiResponse<UserResponseDto>> findById(
 				@Valid 
 				@PathVariable
 				Long id) {
@@ -85,7 +103,7 @@ public class UserController {
 		
 		@PreAuthorize(HasPermissions.HAS_MANAGE_USERS)
 		@PatchMapping("/{id}/branch/{branchId}")
-		public ResponseEntity<UserPatchResponseDto> changeBranch(
+		public ResponseEntity<ApiResponse<UserResponseDto>> changeBranch(
 				@Valid
 				@PathVariable
 				Long id,
@@ -98,7 +116,7 @@ public class UserController {
 		
 		@PreAuthorize(HasPermissions.HAS_MANAGE_USERS)
 		@PatchMapping("/{id}/role/{roleId}")
-		public ResponseEntity<UserPatchResponseDto> changeRole(
+		public ResponseEntity<ApiResponse<UserResponseDto>> changeRole(
 				@Valid
 				@PathVariable
 				Long id,
@@ -111,7 +129,7 @@ public class UserController {
 		
 		@PreAuthorize(HasPermissions.HAS_MANAGE_USERS)
 		@PatchMapping("/{id}/status")
-		public ResponseEntity<UserPatchResponseDto> enableDesableUser(
+		public ResponseEntity<ApiResponse<UserResponseDto>> enableDesableUser(
 				@Valid
 				@PathVariable
 				Long id,
@@ -124,7 +142,7 @@ public class UserController {
 		
 		@PreAuthorize(HasPermissions.HAS_MANAGE_USERS)
 		@PatchMapping("/{id}/state")
-		public ResponseEntity<UserPatchResponseDto> lockUnlockUser(
+		public ResponseEntity<ApiResponse<UserResponseDto>> lockUnlockUser(
 				@Valid
 				@PathVariable
 				Long id,

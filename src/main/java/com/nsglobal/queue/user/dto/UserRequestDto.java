@@ -2,6 +2,7 @@ package com.nsglobal.queue.user.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,14 +17,14 @@ public class UserRequestDto {
 	@NotBlank(message = "Le nom d'utilisateur est obligatoire")
 	private String userName;
 	
-	@NotBlank
+
 	@NotEmpty
 	private String password;
 	
-	@NotBlank(message = "L'adresse e-mail est obligatoire")
+	@NotNull(message = "L'adresse e-mail est obligatoire")
 	private String email;
 	
-	@NotBlank(message = "Le nom est obligatoire")
+	@NotNull(message = "Le nom est obligatoire")
 	private String lastName;
 	
 	@NotBlank(message = "Le prénom est obligatoire")
@@ -37,9 +38,9 @@ public class UserRequestDto {
 	
 	private boolean locked;
 	
-	@NotBlank(message = "L'utilisateur n'est rattaché à aucun succursale de la banque")
+	@NotNull(message = "L'utilisateur n'est rattaché à aucun succursale de la banque")
 	private Long branch_id;
 	
-	@NotBlank(message = "L'utilisateur doit avoir un rôle")
+	@NotNull(message = "L'utilisateur doit avoir un rôle")
 	private Long role_id;
 }

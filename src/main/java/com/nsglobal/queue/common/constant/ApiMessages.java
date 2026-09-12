@@ -87,8 +87,28 @@ public final class ApiMessages {
 
     //
     //---------------------------------------------------------------------------------------
-   //public static final String DELETE_
-
+   //public static final String DELETE_"bloqué":"débloqué" "":
+    public static final String DISABLE=Utilities.isLangFr()?"Désactié":"Disabled";
+    public static final String ENABLE=Utilities.isLangFr()?"Activé":"Enabled";
+    public static final String UNLOCK=Utilities.isLangFr()?"Débloqué":"Unlocked";
+    public static final String LOCK=Utilities.isLangFr()?"Bloqué":"Locked";
+    public static final String USER_PARAM_MSG=Utilities.isLangFr()?"L'utilisateur %s est %s.":"User %s is %s";
+    
+    public static final String USER_EXISTE=Utilities.isLangFr()?"L'utilisateur %s existe déja.":"User %s already exists";
+    public static final String ROLE_NOT_FOUND=Utilities.isLangFr()? "Le role choisi n'existe pas.":"Role not found.";
+    public static final String USER_CREATE_SUCCESS=Utilities.isLangFr()?"L'utilisateur %s est créé avec succès.":"User %s successfully created.";
+    public static final String USER_DELETED=Utilities.isLangFr()?"L'utilisateur %s est supprimé.":"User %s deleted successfully";
+    public static final String USER_UPDATED=Utilities.isLangFr()?"Modification de l'utilisateur %s.":"User %s updated successfully";
+    public static final String USER_NAME_NOT_EXIST=Utilities.isLangFr()?"Le nom d'utilisateur est invalide":"Invalid Username";
+    //Le rôle %s est la nouvelle agence de l'utilisateur %s.
+    public static final String ROLE_ASSIGNED=Utilities.isLangFr()? "Le rôle %s est assigné au user %s.":"Role %s assigned to %s successfully.";
+    public static final String ROLE_ALREADY_EXIST=Utilities.isLangFr()? "Le rôle existe déjà.":"Role already exists.";
+    
+    //"Permission id %d introuvale.".formatted(idPerm);
+    
+    public static final String PERMISSION_NOT_FOUND=Utilities.isLangFr()? "Permission avec ID %d est introuvable.":"Permission with id %d not found";
+    
+    public static final String PERMISSION_SUCCESS_ADD=Utilities.isLangFr()?"Ajout de role %s ":"Role %s added";
     private ApiMessages() {
     }
 }

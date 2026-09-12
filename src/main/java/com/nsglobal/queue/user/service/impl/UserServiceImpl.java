@@ -3,14 +3,21 @@ package com.nsglobal.queue.user.service.impl;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.nsglobal.queue.audit.enums.AuditActionEnum;
 import com.nsglobal.queue.audit.enums.ModulesNameEnum;
 import com.nsglobal.queue.audit.service.AuditService;
 import com.nsglobal.queue.branch.entity.Branch;
 import com.nsglobal.queue.branch.repository.BranchRepository;
+import com.nsglobal.queue.common.constant.ApiMessages;
+import com.nsglobal.queue.common.response.ApiPageResponse;
+import com.nsglobal.queue.common.response.ApiResponse;
+import com.nsglobal.queue.common.response.ResponseBuilder;
 import com.nsglobal.queue.role.entity.Role;
 import com.nsglobal.queue.role.repository.RoleRepository;
 import com.nsglobal.queue.user.dto.UserPatchResponseDto;
@@ -36,57 +43,59 @@ public class UserServiceImpl implements UserService {
 	
 	private final AuditService audit;
 	
-	private User getUserById(Long id,AuditActionEnum action) {
-		User user=userRepository.findById(id).orElseThrow(
-				()->{
+	private User getUserById(Long id) {
+		User user=userRepository.findById(id).orElseThrow(null);
+			/*	()->{
 					String msg="L'utilisateur recherché est introuvable.";
 					audit.log(action,ModulesNameEnum.USER , "❌ "+msg, false);
 					throw new RuntimeException(msg);
-				}
-				);
+				}*/
+				
 		return user;
 	}
-	
+	@Transactional
 	@Override
-	public UserResponseDto create(UserRequestDto dto) {
+	public ApiResponse<UserResponseDto> create(UserRequestDto dto) {
 		boolean existUser=userRepository.existsByUserName(dto.getUserName());
 		//boolean existByPhone=userRepository.exists(dto.getPhone());
 		if(existUser) {
-			String msg="L'utilisateur %s existe déja.".formatted(dto.getUserName());
+			String msg=ApiMessages.USER_EXISTE.formatted(dto.getUserName());
 			audit.log(
 					AuditActionEnum.CREATE_USER, 
 					ModulesNameEnum.USER, 
 					"❌ "+msg, 
 					true);
-			throw new RuntimeException(msg);
+			ApiPageResponse.builder()
+			.build();
+			return ResponseBuilder.error(msg);
 		}
 		User usr=mapper.toEntity(dto);
 		
 		String encodedPassword=passwordEncoder.encode(dto.getPassword());
 		
-		Role role=roleRepo.findById(dto.getRole_id()).orElseThrow(
-				()->{
-					String msg="Le role choisi n'existe pas.";
+		Role role=roleRepo.findById(dto.getRole_id()).orElseThrow(null);
+			if(role==null){
+					String msg=ApiMessages.ROLE_NOT_FOUND;
 					audit.log(
 							AuditActionEnum.CREATE_USER, 
 							ModulesNameEnum.USER, 
 							"❌ "+msg, 
-							true);
-					throw new RuntimeException(msg);
+							false);
+					return ResponseBuilder.error(msg);
 				}
-				);
+				
 		
-		Branch branch=branchRepo.findById(dto.getRole_id()).orElseThrow(
-				()->{
-					String msg="L'agence de la banque choisi n'existe pas.";
+		Branch branch=branchRepo.findById(dto.getRole_id()).orElseThrow(null);
+				if(branch==null){
+					String msg=ApiMessages.NOTFOUND_BRANCH;
 					audit.log(
 							AuditActionEnum.CREATE_USER, 
 							ModulesNameEnum.USER, 
 							"❌ "+msg, 
-							true);
-					throw	new RuntimeException(msg);
+							false);
+					return ResponseBuilder.error(msg);
 				}
-				);
+			
 		
 		usr.setBranch(branch);
 		usr.setRole(role);
@@ -95,32 +104,38 @@ public class UserServiceImpl implements UserService {
 		audit.log(
 				AuditActionEnum.CREATE_USER, 
 				ModulesNameEnum.USER, 
-				"✅ création d'un nouveau utilisateur %s.".formatted(usr.getUserName()), 
+				"✅ "+ApiMessages.USER_CREATE_SUCCESS.formatted(usr.getUserName()), 
 				true);
-		return mapper.toUserResponseDto(saved);
+		return ResponseBuilder.success(ApiMessages.USER_CREATE_SUCCESS,mapper.toUserResponseDto(saved));
 	}
-
+	
+	@Transactional
 	@Override
-	public UserResponseDto update(UserRequestDto dto, Long id) {
+	public ApiResponse<UserResponseDto> update(UserRequestDto dto, Long id) {
 		
-		User existance=getUserById(id,AuditActionEnum.UPDATE_USER);
+		User existance=getUserById(id);
+		if(existance==null) {
+			String msg=ApiMessages.USER_NOT_FOUND;
+			audit.log(AuditActionEnum.UPDATE_USER,ModulesNameEnum.USER , "❌ "+msg, false);
+		return ResponseBuilder.error(msg);
+		}
 		
 		User newUser=mapper.toEntity(dto);
 		
-		Role role=roleRepo.findById(dto.getRole_id()).orElseThrow(
-				()->{
-					String msg="Le role choisi n'existe pas.";
+		Role role=roleRepo.findById(dto.getRole_id()).orElseThrow(null);
+				if(role==null){
+					String msg=ApiMessages.ROLE_NOT_FOUND;
 					audit.log(AuditActionEnum.UPDATE_USER,ModulesNameEnum.USER , "❌ "+msg, false);
-				throw	new RuntimeException(msg);
+				return ResponseBuilder.error(msg);
 				}
-				);
-		Branch branch=branchRepo.findById(dto.getRole_id()).orElseThrow(
-				()->{
-					String msg="L'agence de la banque choisi n'existe pas.";
+				
+		Branch branch=branchRepo.findById(dto.getRole_id()).orElseThrow(null);
+				if(branch==null){
+					String msg=ApiMessages.NOTFOUND_BRANCH;
 					audit.log(AuditActionEnum.UPDATE_USER,ModulesNameEnum.USER , "❌ "+msg, false);
-				throw	new RuntimeException(msg);
+				return ResponseBuilder.error(msg);
 				}
-				);
+				
 		
 		existance.setLastName(newUser.getLastName());
 		existance.setFirstName(newUser.getFirstName());
@@ -131,145 +146,164 @@ public class UserServiceImpl implements UserService {
 		existance.setRole(role);
 		User saved=userRepository.save(existance);
 		audit.log(
-				AuditActionEnum.UPDATE_ROLE, 
+				AuditActionEnum.UPDATE_USER, 
 				ModulesNameEnum.USER, 
-				"✅ Modification de l'utilisateur %s.".formatted(saved.getUserName()), 
+				"✅ "+ApiMessages.USER_UPDATED.formatted(saved.getUserName()), 
 				true);
-		return mapper.toUserResponseDto(saved);
+		return ResponseBuilder.success(ApiMessages.UPDATED, mapper.toUserResponseDto(saved));
+	}
+	@Transactional(readOnly = true)
+	@Override
+	public ApiResponse<UserResponseDto> findById(Long id) {
+		return ResponseBuilder.success(ApiMessages.SUCCESS, mapper.toUserResponseDto(getUserById(id)));
 	}
 
+	@Transactional
 	@Override
-	public UserResponseDto findById(Long id) {
-		return mapper.toUserResponseDto(getUserById(id,AuditActionEnum.VIEW_DETAIL));
-	}
-
-	
-	@Override
-	public UserPatchResponseDto removeUser(Long id) {
-		User exists=getUserById(id,AuditActionEnum.DELETE_USER);
+	public ApiResponse<UserResponseDto> removeUser(Long id) {
+		User exists=getUserById(id);
+		if(exists==null) {
+			String msg=ApiMessages.USER_NOT_FOUND;
+			audit.log(AuditActionEnum.DELETE_USER,ModulesNameEnum.USER , "❌ "+msg, false);
+		return ResponseBuilder.error(msg);
+		}
 		exists.setDeletedAt(LocalDateTime.now());
 		userRepository.save(exists);
-		String msg="✅ L'utilisateur %s est supprimé.".formatted(exists.getUserName());
+		String msg=ApiMessages.USER_DELETED.formatted(exists.getUserName());
+		String msge="✅ "+msg;
 		audit.log(AuditActionEnum.DELETE_USER,ModulesNameEnum.USER ,
-				msg,
+				msge,
 				true);
-		return UserPatchResponseDto
-				.builder()
-				.error(null)
-				.success(true)
-				.message(msg)
-				.build();
+		return ResponseBuilder.success(msg, mapper.toUserResponseDto(exists));
 	}
-
+	
+	@Transactional(readOnly = true)
 	@Override
-	public UserResponseDto findByUserName(String userName) {
+	public ApiResponse<UserResponseDto> findByUserName(String userName) {
 		User usr=userRepository.findByUserName(userName)
-				.orElseThrow(()->{
-			throw new RuntimeException("Le nom d'utilisateur est invalide");
-		});
+				.orElseThrow(null);
+		if(usr==null){
+			
+			return ResponseBuilder.error(ApiMessages.USER_NAME_NOT_EXIST);
+		}
 				
-		return mapper.toUserResponseDto(usr);
+		return ResponseBuilder.success(ApiMessages.SUCCESS,mapper.toUserResponseDto(usr));
 	}
 
+	@Transactional
 	@Override
-	public UserPatchResponseDto enableDesableUser(Long userId, boolean isEnabled) {
-		User exists=getUserById(userId,isEnabled?AuditActionEnum.ENABLE_USER:AuditActionEnum.DISABLE_USER);
+	public ApiResponse<UserResponseDto> enableDesableUser(Long userId, boolean isEnabled) {
+		User exists=getUserById(userId);
+		if(exists==null) {
+			String msg=ApiMessages.USER_NOT_FOUND;
+			audit.log(isEnabled==true?AuditActionEnum.ENABLE_USER:AuditActionEnum.DISABLE_USER,ModulesNameEnum.USER , "❌ "+msg, false);
+		return ResponseBuilder.error(msg);
+		}
 		exists.setEnabled(isEnabled);
-		userRepository.save(exists);
-		String msg=isEnabled?"activé":"désactié";
-		String msg2="✅ L'utilisateur %s est %s.".formatted(exists.getUserName(),msg);
+		User saved=userRepository.save(exists);
+		String msg=isEnabled?ApiMessages.ENABLE:ApiMessages.DISABLE;
+		String msg2="✅ "+ApiMessages.USER_PARAM_MSG.formatted(exists.getUserName(),msg);
 		
 		audit.log(isEnabled?AuditActionEnum.ENABLE_USER:AuditActionEnum.DISABLE_USER,ModulesNameEnum.USER ,
 				msg2,
 				true);
 		
-	return	UserPatchResponseDto
-		.builder()
-		.error(null)
-		.success(true)
-		.message(msg2)
-		.build();
+	return	ResponseBuilder.success(msg2, mapper.toUserResponseDto(saved));
 	}
-
+	
+	@Transactional
 	@Override
-	public UserPatchResponseDto lockUnlockUserUser(Long userId, boolean isLocked) {
-		User exists=getUserById(userId,isLocked?AuditActionEnum.LOCK_USER:AuditActionEnum.UNLOCK_USER);
+	public ApiResponse<UserResponseDto> lockUnlockUserUser(Long userId, boolean isLocked) {
+		User exists=getUserById(userId);
+		if(exists==null) {
+			String msg=ApiMessages.USER_NOT_FOUND;
+			audit.log(isLocked==true?AuditActionEnum.LOCK_USER:AuditActionEnum.UNLOCK_USER,ModulesNameEnum.USER , "❌ "+msg, false);
+		return ResponseBuilder.error(msg);
+		}
 		exists.setLocked(isLocked);
-		userRepository.save(exists);
-		String msg=isLocked?"bloqué":"débloqué";
-		String msg2="✅ L'utilisateur %s est %s.".formatted(exists.getUserName(),msg);
+		User saved=userRepository.save(exists);
+		String msg=isLocked?ApiMessages.LOCK:ApiMessages.UNLOCK;
+		String msg2="✅ "+ApiMessages.USER_PARAM_MSG.formatted(exists.getUserName(),msg);
 		audit.log(isLocked?AuditActionEnum.LOCK_USER:AuditActionEnum.UNLOCK_USER,ModulesNameEnum.USER ,
 				msg2,
 				true);
-		return UserPatchResponseDto
-		.builder()
-		.error(null)
-		.success(true)
-		.message(msg2)
-		.build();
+		return ResponseBuilder.success(msg2, mapper.toUserResponseDto(saved));
 	}
-
+	
+	@Transactional
 	@Override
-	public UserPatchResponseDto assignRole(Long userId, Long roleId) {
-		User exists=getUserById(userId,AuditActionEnum.ASSIGN_ROLE);
-		Role newRole=roleRepo.findById(roleId).orElseThrow(
-				()->{
-					String msg="Le rôle avec ID %d n'est pas retrouvé.".formatted(roleId);
+	public ApiResponse<UserResponseDto> assignRole(Long userId, Long roleId) {
+		User exists=getUserById(userId);
+		//
+		if(exists==null) {
+			String msg=ApiMessages.USER_NOT_FOUND;
+			audit.log(AuditActionEnum.ASSIGN_ROLE,ModulesNameEnum.USER , "❌ "+msg, false);
+		return ResponseBuilder.error(msg);
+		}
+		Role newRole=roleRepo.findById(roleId).orElseThrow(null);
+				if(newRole==null){
+					String msg=ApiMessages.ROLE_NOT_FOUND;
 					audit.log(
 							AuditActionEnum.ASSIGN_ROLE, 
 							ModulesNameEnum.ROLE, 
 							"❌ "+msg, 
 							false);
-				throw new RuntimeException(msg);
-				});
+					return ResponseBuilder.error(msg);
+				}
 		
 		exists.setRole(newRole);
 		
-		userRepository.save(exists);
-		String msg="✅ Le rôle %s est assigné au user %s.".formatted(newRole.getName(),exists.getUserName());
+		User saved=userRepository.save(exists);
+		
+		String msg=ApiMessages.ROLE_ASSIGNED.formatted(newRole.getName(),exists.getUserName());
 		audit.log(AuditActionEnum.ASSIGN_ROLE,ModulesNameEnum.USER ,
-				msg,
+				"✅ "+msg,
 				true);
-		return UserPatchResponseDto
-				.builder()
-				.error(null)
-				.success(true)
-				.message(msg)
-				.build();
+		return ResponseBuilder.success(msg, mapper.toUserResponseDto(saved));
 	}
-
+	
+	@Transactional
 	@Override
-	public UserPatchResponseDto changeUserBranch(Long userId, Long branchId) {
-		User exists=getUserById(userId,AuditActionEnum.CHANGE_BRANCH);
+	public ApiResponse<UserResponseDto> changeUserBranch(Long userId, Long branchId) {
+		User exists=getUserById(userId);
+		if(exists==null) {
+			String msg=ApiMessages.USER_NOT_FOUND;
+			audit.log(AuditActionEnum.CHANGE_BRANCH,ModulesNameEnum.USER , "❌ "+msg, false);
+		return ResponseBuilder.error(msg);
+		}
+		
 		Branch b=branchRepo.findById(branchId).
-				orElseThrow(
-						()->{
-							String msg="L'agence avec identifiant %s ".formatted(branchId);
+				orElseThrow(null);
+						if(b==null){
+							String msg=ApiMessages.NOTFOUND_BRANCH;
+							
 							audit.log(
 									AuditActionEnum.CHANGE_BRANCH, 
 									ModulesNameEnum.USER, 
 									"❌ "+msg, 
 									false);
-							throw new RuntimeException(msg);
-						});
+							ResponseBuilder.error(msg);
+						}
+						
 		exists.setBranch(b);
-		userRepository.save(exists);
-		String msg="✅ Le rôle %s est la nouvelle agence de l'utilisateur %s.".formatted(b.getName(),exists.getUserName());
-		audit.log(AuditActionEnum.ASSIGN_ROLE,ModulesNameEnum.USER ,
-				msg,
+	User saved=	userRepository.save(exists);
+		String msg=ApiMessages.SUCCESS;
+		audit.log(AuditActionEnum.CHANGE_BRANCH,
+				ModulesNameEnum.USER ,
+				"✅ "+msg,
 				true);
-		return UserPatchResponseDto
-				.builder()
-				.error(null)
-				.success(true)
-				.message(msg)
-				.build();
+		return ResponseBuilder.success(msg, mapper.toUserResponseDto(saved));
 	}
-
+	
+	@Transactional(readOnly = true)
 	@Override
-	public List<UserResponseDto> findAll() {
+	public ApiResponse<List<UserResponseDto>> findAll() {
 		List <User> us=userRepository.findAll();
-		return mapper.toListUserResponseDto(us);
+		return ResponseBuilder.success(ApiMessages.SUCCESS,mapper.toListUserResponseDto(us));
+	}
+	public ApiPageResponse<UserResponseDto> findAll(Pageable pageable) {
+		Page <User> us=userRepository.findAll(pageable);
+		return ResponseBuilder.page(ApiMessages.SUCCESS,us.map(mapper::toUserResponseDto));
 	}
 
 
