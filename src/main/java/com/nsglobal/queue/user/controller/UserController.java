@@ -135,9 +135,9 @@ public class UserController {
 				Long id,
 				@Valid
 				@RequestParam
-				boolean isEnable
+				boolean isEnabled
 				){
-			return ResponseEntity.ok(userService.enableDesableUser(id, isEnable));
+			return ResponseEntity.ok(userService.enableDesableUser(id, isEnabled));
 		}
 		
 		@PreAuthorize(HasPermissions.HAS_MANAGE_USERS)
