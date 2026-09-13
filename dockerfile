@@ -8,5 +8,5 @@ RUN ./mvnw clean package -DskipTests
 FROM eclipse-temurin:25-jdk
 WORKDIR /bank-queue-management-api
 COPY --from=build /bank-queue-management-api/target/*.jar app.jar
-EXPOSE 8080
+EXPOSE 2026
 ENTRYPOINT ["java", "-jar", "app.jar"]
