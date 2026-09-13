@@ -85,7 +85,10 @@ public class SecurityConfig {
 	    CorsConfiguration configuration = new CorsConfiguration();
 
 	    configuration.setAllowedOrigins(List.of(
-	            "http://localhost:4200"
+	            "http://localhost:4200",
+	            "https://ns-global-queue-front.vercel.app",
+	            "https://queue-manager.edkoffa.workers.dev/",
+	            "https://qmansys.pages.dev/"
 	    ));
 
 	    configuration.setAllowedMethods(List.of(
