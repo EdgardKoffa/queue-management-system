@@ -9,4 +9,4 @@ FROM eclipse-temurin:25-jre-jammy
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 2026
-ENTRYPOINT ["java", "-jar", "bank-queue-management-api.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
